@@ -43,7 +43,18 @@ public class ProblemsDB {
     public ProblemsDB() {
     }
 
-    public ProblemsDB(Long problemID, LocalDate date, ScooterDB scooter, CategoriesDB categories, ProblemStatusDB status, String name, String description, UserDB referent, Double latitude, Double longitude) {
+    public ProblemsDB(
+        Long problemID,
+        LocalDate date,
+        ScooterDB scooter,
+        CategoriesDB categories,
+        ProblemStatusDB status,
+        String name,
+        String description,
+        UserDB referent,
+        Double latitude,
+        Double longitude
+    ) {
         this.problemID = problemID;
         this.date = date;
         this.scooter = scooter;
@@ -56,7 +67,18 @@ public class ProblemsDB {
         this.longitude = longitude;
     }
 
-    public ProblemsDB(LocalDate date, ScooterDB scooter, CategoriesDB categories, ProblemStatusDB status, String name, String description, UserDB referent, Double latitude, Double longitude) {
+    //TODO pourquoi on l'a si on s'en sert pas ?
+    public ProblemsDB(
+        LocalDate date,
+        ScooterDB scooter,
+        CategoriesDB categories,
+        ProblemStatusDB status,
+        String name,
+        String description,
+        UserDB referent,
+        Double latitude,
+        Double longitude
+    ) {
         this(null, date, scooter, categories, status, name, description, referent, latitude, longitude);
     }
 
@@ -102,16 +124,17 @@ public class ProblemsDB {
 
     public static ProblemsDB of(Problem problem) {
         ProblemsDB problemsDB = new ProblemsDB(
-                problem.getID(),
-                problem.getDate(),
-                ScooterDB.of(problem.getScooter()),
-                CategoriesDB.of(problem.getCategories()),
-                ProblemStatusDB.of(problem.getStatus()),
-                problem.getName(),
-                problem.getDescription(),
-                null,
-                problem.getCoordinate().getLatitude(),
-                problem.getCoordinate().getLongitude());
+            problem.getID(),
+            problem.getDate(),
+            ScooterDB.of(problem.getScooter()),
+            CategoriesDB.of(problem.getCategories()),
+            ProblemStatusDB.of(problem.getStatus()),
+            problem.getName(),
+            problem.getDescription(),
+            null,
+            problem.getCoordinate().getLatitude(),
+            problem.getCoordinate().getLongitude()
+        );
 
         if (problem.getReferent() != null) {
             problemsDB.referent = UserDB.of(problem.getReferent());
@@ -121,15 +144,16 @@ public class ProblemsDB {
 
     public Problem toProblem(){
         Problem problem = new Problem(
-                null,
-                problemID,
-                name,
-                description,
-                scooter.toScooter(),
-                new Coordinate(latitude,longitude),
-                date,
-                categories.toCategories(),
-                status.toProblemStatus());
+            null,
+            problemID,
+            name,
+            description,
+            scooter.toScooter(),
+            new Coordinate(latitude,longitude),
+            date,
+            categories.toCategories(),
+            status.toProblemStatus()
+        );
 
         if (this.referent != null) {
             problem.setReferent(this.referent.toUser());

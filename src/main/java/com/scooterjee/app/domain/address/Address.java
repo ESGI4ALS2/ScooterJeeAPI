@@ -12,7 +12,16 @@ public class Address extends Entity<Long> {
     private final Double latitude;
     private final Double longitude;
 
-    public Address(Long id, String city, String street, String number, String country, String postalCode, Double latitude, Double longitude) {
+    public Address(
+        Long id,
+        String city,
+        String street,
+        String number,
+        String country,
+        String postalCode,
+        Double latitude,
+        Double longitude
+    ) {
         super(id);
         this.city = city;
         this.street = street;

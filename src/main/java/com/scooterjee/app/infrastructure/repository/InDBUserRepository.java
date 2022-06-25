@@ -24,7 +24,11 @@ public class InDBUserRepository implements UserRepository {
 
     private final RoleDBRepository roleDBRepository;
 
-    public InDBUserRepository(UserDBRepository dbRepository, CategoriesDBRepository categoriesDBRepository, RoleDBRepository roleDBRepository) {
+    public InDBUserRepository(
+        UserDBRepository dbRepository,
+        CategoriesDBRepository categoriesDBRepository,
+        RoleDBRepository roleDBRepository
+    ) {
         this.dbRepository = dbRepository;
         this.categoriesDBRepository = categoriesDBRepository;
         this.roleDBRepository = roleDBRepository;

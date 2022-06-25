@@ -18,9 +18,11 @@ public class CategoriesDB {
     private String name;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_categories",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "categories_id") })
+    @JoinTable(
+        name = "user_categories",
+        joinColumns = { @JoinColumn(name = "user_id") },
+        inverseJoinColumns = { @JoinColumn(name = "categories_id") }
+    )
     private List<UserDB> assignedUser;
 
     public CategoriesDB() {

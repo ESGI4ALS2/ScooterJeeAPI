@@ -37,7 +37,11 @@ public class UserController extends ErrorHandler {
     private String token;
 
 
-    public UserController(UserService userService, AddressService addressService, ProblemService problemService) {
+    public UserController(
+        UserService userService,
+        AddressService addressService,
+        ProblemService problemService
+    ) {
         this.userService = userService;
         this.addressService = addressService;
         this.problemService = problemService;
@@ -45,15 +49,23 @@ public class UserController extends ErrorHandler {
 
     @GetMapping(value = "/users")
     public List<UserDTO> getUsers() {
-        return userService.getAll().stream()
-                .map(user -> new UserDTO(
-                        user.getEmailAddress().toString(),
-                        user.getLastName(),
-                        user.getFirstName(),
-                        user.getAddress().toString(),
-                        user.getPhoneNumber(),
-                        user.getAssignedRoles().stream().map(role -> new RoleDTO(role.getID(), role.getName())).collect(Collectors.toList())))
-                .collect(Collectors.toList());
+
+        return userService
+            .getAll()
+            .stream()
+            .map(user -> new UserDTO(
+                user.getEmailAddress().toString(),
+                user.getLastName(),
+                user.getFirstName(),
+                user.getAddress().toString(),
+                user.getPhoneNumber(),
+                user.getAssignedRoles()
+                    .stream()
+                    .map(role -> new RoleDTO(role.getID(), role.getName()))
+                    .collect(Collectors.toList())
+            ))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/users/{email}")
@@ -65,13 +77,23 @@ public class UserController extends ErrorHandler {
     @GetMapping(value = "/users/{email}/categories")
     public List<CategoryDTO> getUserCategories(@PathVariable @Valid String email) {
         User user = userService.getByEmail(new EmailAddress(email));
-        return user.getAssignedCategories().stream().map(categories -> new CategoryDTO(categories.getID(), categories.getName())).collect(Collectors.toList());
+        return user
+            .getAssignedCategories()
+            .stream()
+            .map(categories -> new CategoryDTO(categories.getID(), categories.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/users/{email}/roles")
     public List<RoleDTO> getUserRoles(@PathVariable @Valid String email) {
         User user = userService.getByEmail(new EmailAddress(email));
-        return user.getAssignedRoles().stream().map(role -> new RoleDTO(role.getID(), role.getName())).collect(Collectors.toList());
+        return user
+            .getAssignedRoles()
+            .stream()
+            .map(role -> new RoleDTO(role.getID(), role.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/users/{email}/availableproblems")
@@ -88,49 +110,66 @@ public class UserController extends ErrorHandler {
     }
 
     @PostMapping(value = "/users/{email}/categories")
-    public void addUserCategories(@PathVariable @Valid String email, @RequestBody @Valid UserCategoriesDTO userCategoriesDTO) {
+    public void addUserCategories(
+        @PathVariable @Valid String email,
+        @RequestBody @Valid UserCategoriesDTO userCategoriesDTO
+    ) {
         for (Long id: userCategoriesDTO.list ) {
             userService.addCategoryToUser(new EmailAddress(email), id);
         }
     }
 
     @PostMapping(value = "/users/{email}/roles")
-    public void addUserRoles(@PathVariable @Valid String email, @RequestBody @Valid UserCategoriesDTO userCategoriesDTO) {
+    public void addUserRoles(
+        @PathVariable @Valid String email,
+        @RequestBody @Valid UserCategoriesDTO userCategoriesDTO
+    ) {
         for (Long id: userCategoriesDTO.list ) {
             userService.addRoleToUser(new EmailAddress(email), id);
         }
     }
 
     @PostMapping(value = "/users/{email}/roles/{id}")
-    public void addUserRoles(@PathVariable @Valid String email, @PathVariable @Valid Long id) {
+    public void addUserRoles(
+        @PathVariable @Valid String email,
+        @PathVariable @Valid Long id
+    ) {
         userService.addRoleToUser(new EmailAddress(email), id);
     }
 
     @PostMapping(value = "/users")
     public void addUser(@RequestBody @Valid CreateUserDTO createUserDTO) {
         JOpenCageGeocoder jOpenCageGeocoder = new JOpenCageGeocoder(token);
-        JOpenCageForwardRequest request = new JOpenCageForwardRequest(
-                createUserDTO.address.number + " " +
-                        createUserDTO.address.street + ", " +
-                        createUserDTO.address.postalCode);
+
+        String addressAsString = String.format(
+            "%s %s, %s",
+            createUserDTO.address.number,
+            createUserDTO.address.street,
+            createUserDTO.address.postalCode
+        );
+
+        JOpenCageForwardRequest request = new JOpenCageForwardRequest(addressAsString);
+
         request.setRestrictToCountryCode("fr");
 
         JOpenCageResponse response = jOpenCageGeocoder.forward(request);
         JOpenCageLatLng firstResultLatLng = response.getFirstPosition();
 
         Address address = new Address(
-                null,
-                createUserDTO.address.city,
-                createUserDTO.address.street,
-                createUserDTO.address.number,
-                createUserDTO.address.country,
-                createUserDTO.address.postalCode,
-                firstResultLatLng.getLat(),
-                firstResultLatLng.getLng());
+            null,
+            createUserDTO.address.city,
+            createUserDTO.address.street,
+            createUserDTO.address.number,
+            createUserDTO.address.country,
+            createUserDTO.address.postalCode,
+            firstResultLatLng.getLat(),
+            firstResultLatLng.getLng()
+        );
 
         addressService.add(address);
 
-        userService.add(new User(
+        userService.add(
+            new User(
                 null,
                 createUserDTO.firstname,
                 createUserDTO.lastname,
@@ -138,11 +177,15 @@ public class UserController extends ErrorHandler {
                 createUserDTO.phoneNumber,
                 new EmailAddress(createUserDTO.email),
                 address
-        ));
+            )
+        );
     }
 
     @DeleteMapping(value = "/users/{email}/roles/{id}")
-    public void deleteRoleForUser(@PathVariable @Valid String email, @PathVariable @Valid Long id) {
+    public void deleteRoleForUser(
+        @PathVariable @Valid String email,
+        @PathVariable @Valid Long id
+    ) {
         userService.removeRoleToUser(new EmailAddress(email), id);
     }
 }

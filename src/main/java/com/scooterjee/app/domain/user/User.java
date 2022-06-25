@@ -42,15 +42,56 @@ public class User extends Entity<Long> {
         this.assignedRoles = assignedRoles;
     }
 
-    public User(Long id, String firstName, String lastName, String password, String phoneNumber, EmailAddress emailAddress, Address address) {
-        this(id, firstName, lastName, password, phoneNumber, emailAddress, address, new ArrayList<>(), new ArrayList<>());
+    public User(
+        Long id,
+        String firstName,
+        String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address
+    ) {
+        this(
+            id,
+            firstName,
+            lastName,
+            password,
+            phoneNumber,
+            emailAddress,
+            address,
+            new ArrayList<>(),
+            new ArrayList<>()
+        );
     }
 
-    public User(String firstName, String lastName, String password, String phoneNumber, EmailAddress emailAddress, Address address) {
-        this(null, firstName, lastName, password, phoneNumber, emailAddress, address, new ArrayList<>(), new ArrayList<>());
+    public User(
+        String firstName,
+        String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address
+    ) {
+        this(
+            null,
+            firstName,
+            lastName,
+            password,
+            phoneNumber,
+            emailAddress,
+            address,
+            new ArrayList<>(),
+            new ArrayList<>()
+        );
     }
 
-    private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
+    //TODO déplacer dans ProblemService
+    private double meterDistanceToProblem(
+        double lat_a,
+        double lng_a,
+        double lat_b,
+        double lng_b
+    ) {
         float pk = (float) (180.f/Math.PI);
 
         double a1 = lat_a / pk;
@@ -63,21 +104,28 @@ public class User extends Entity<Long> {
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
+        //earth radius in meters = 6366000
+        //TODO constante
         return 6366000 * tt;
     }
 
+    //TODO déplacer dans ProblemService
     public boolean isUserAvailableForProblem(Problem problem){
 
         if( problem.getReferent() != null){
             return false;
         }
 
-        if(meterDistanceBetweenPoints(problem.getCoordinate().getLatitude(), problem.getCoordinate().getLongitude(),
-                this.address.getLatitude(), this.address.getLongitude()) >= 10000){
-            return false;
-        }
+        double distanceToProblem = meterDistanceToProblem(
+            problem.getCoordinate().getLatitude(),
+            problem.getCoordinate().getLongitude(),
+            this.address.getLatitude(),
+            this.address.getLongitude()
+        );
 
-        return true;
+        //10000 = 10km j'imagine
+        //TODO constante
+        return !(distanceToProblem >= 10000);
     }
 
     public EmailAddress getEmailAddress() {

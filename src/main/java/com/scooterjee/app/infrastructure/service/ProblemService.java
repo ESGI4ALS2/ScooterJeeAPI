@@ -19,13 +19,20 @@ public class ProblemService extends SimpleService<ProblemRepository, Problem, Lo
     }
 
     public void putReferentOnProblem(User user, Long problem_id) {
-        Problem problem = repository.get(problem_id).orElseThrow(()->new SimpleServiceObjectNotFoundException("problem",problem_id.toString()));
+        Problem problem = repository
+            .get(problem_id)
+            .orElseThrow(() -> new SimpleServiceObjectNotFoundException("problem",problem_id.toString())
+        );
+
         problem.setReferent(user);
         repository.update(problem);
     }
 
     public void putProblemStatusOnProblem(ProblemStatus problemStatus, Long problem_id) {
-        Problem problem = repository.get(problem_id).orElseThrow(()->new SimpleServiceObjectNotFoundException("problem",problem_id.toString()));
+        Problem problem = repository
+            .get(problem_id)
+            .orElseThrow(()->new SimpleServiceObjectNotFoundException("problem",problem_id.toString())
+        );
         problem.setStatus(problemStatus);
         repository.update(problem);
     }
@@ -35,6 +42,7 @@ public class ProblemService extends SimpleService<ProblemRepository, Problem, Lo
             return List.of();
         }
         List<Problem> list = repository.getAllAvailableProblem(user.getAssignedCategories().get(0).getID());
+
         return list.stream().filter(user::isUserAvailableForProblem).collect(Collectors.toList());
     }
 

@@ -22,13 +22,17 @@ public class ProblemStatusController extends ErrorHandler {
 
     @GetMapping(value = "/problemstatus")
     public List<ProblemStatusDTO> getProblemStatus() {
-        return problemStatusService.getAll().stream()
-                .map(problemStatus -> new ProblemStatusDTO(problemStatus.getID(), problemStatus.getName())).collect(Collectors.toList());
+        return problemStatusService
+            .getAll().stream()
+            .map(problemStatus -> new ProblemStatusDTO(problemStatus.getID(), problemStatus.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/problemstatus/{status}")
     public ProblemStatusDTO getProblemStatusByName(@PathVariable @Valid String status) {
         ProblemStatus problemStatus = problemStatusService.getByName(status);
+
         return new ProblemStatusDTO(problemStatus.getID(), problemStatus.getName());
     }
 

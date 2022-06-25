@@ -22,7 +22,15 @@ public class AddressDB {
     protected AddressDB() {
     }
 
-    protected AddressDB(String city, String street, String number, String country, String postalCode, Double latitude, Double longitude) {
+    protected AddressDB(
+        String city,
+        String street,
+        String number,
+        String country,
+        String postalCode,
+        Double latitude,
+        Double longitude
+    ) {
         this.city = city;
         this.street = street;
         this.number = number;
@@ -32,7 +40,16 @@ public class AddressDB {
         this.longitude = longitude;
     }
 
-    protected AddressDB(Long addressID, String city, String street, String number, String country, String postalCode, Double latitude, Double longitude) {
+    protected AddressDB(
+        Long addressID,
+        String city,
+        String street,
+        String number,
+        String country,
+        String postalCode,
+        Double latitude,
+        Double longitude
+    ) {
         this.addressID = addressID;
         this.city = city;
         this.street = street;
@@ -45,14 +62,15 @@ public class AddressDB {
 
     public static AddressDB of(Address address) {
         return new AddressDB(
-                address.getID(),
-                address.getCity(),
-                address.getStreet(),
-                address.getNumber(),
-                address.getCountry(),
-                address.getPostalCode(),
-                address.getLatitude(),
-                address.getLongitude());
+            address.getID(),
+            address.getCity(),
+            address.getStreet(),
+            address.getNumber(),
+            address.getCountry(),
+            address.getPostalCode(),
+            address.getLatitude(),
+            address.getLongitude()
+        );
     }
 
     public Long getAddressID() {
@@ -89,13 +107,14 @@ public class AddressDB {
 
     public Address toAddress() {
         return new Address(
-                this.addressID,
-                this.city,
-                this.street,
-                this.number,
-                this.country,
-                this.postalCode,
-                this.latitude,
-                this.longitude);
+            this.addressID,
+            this.city,
+            this.street,
+            this.number,
+            this.country,
+            this.postalCode,
+            this.latitude,
+            this.longitude
+        );
     }
 }

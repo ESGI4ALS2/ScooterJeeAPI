@@ -27,9 +27,12 @@ public class ScooterModelController extends ErrorHandler {
 
     @GetMapping(value = "/models")
     public List<ScooterModelDTO> getModels() {
-        return scooterModelService.getAll().stream()
-                .map(scooterModel -> new ScooterModelDTO(scooterModel.getID(),scooterModel.getName()))
-                .collect(Collectors.toList());
+        return scooterModelService
+            .getAll()
+            .stream()
+            .map(scooterModel -> new ScooterModelDTO(scooterModel.getID(),scooterModel.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @PostMapping(value = "/models")

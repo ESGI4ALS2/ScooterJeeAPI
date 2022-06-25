@@ -16,7 +16,10 @@ public class UserService extends SimpleService<UserRepository, User, Long> {
     }
 
     public User getByEmail(EmailAddress emailAddress){
-        return repository.getByEmail(emailAddress).orElseThrow(() -> new SimpleServiceObjectNotFoundException("user", emailAddress.toString()));
+        return repository
+            .getByEmail(emailAddress)
+            .orElseThrow(() -> new SimpleServiceObjectNotFoundException("user", emailAddress.toString())
+        );
     }
 
     public void addCategoryToUser(EmailAddress userEmail, Long categoryID){

@@ -20,7 +20,16 @@ public class Problem extends Entity<Long> {
     private User referent;
     private ProblemStatus status;
 
-    public Problem(Long id, String name, String description, Scooter scooter, Coordinate coordinate, LocalDate date, Categories categories, ProblemStatus status) {
+    public Problem(
+        Long id,
+        String name,
+        String description,
+        Scooter scooter,
+        Coordinate coordinate,
+        LocalDate date,
+        Categories categories,
+        ProblemStatus status
+    ) {
         super(id);
         this.name = name;
         this.description = description;
@@ -31,7 +40,17 @@ public class Problem extends Entity<Long> {
         this.status = status;
     }
 
-    public Problem(User referent, Long id, String name, String description, Scooter scooter, Coordinate coordinate, LocalDate date, Categories categories, ProblemStatus status) {
+    public Problem(
+        User referent,
+        Long id,
+        String name,
+        String description,
+        Scooter scooter,
+        Coordinate coordinate,
+        LocalDate date,
+        Categories categories,
+        ProblemStatus status
+    ) {
         super(id);
         this.name = name;
         this.description = description;
