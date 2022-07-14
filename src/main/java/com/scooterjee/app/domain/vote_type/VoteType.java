@@ -12,4 +12,8 @@ public class VoteType extends Entity<Long> {
         super(id);
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -34,7 +34,7 @@ public class AuthenticationController extends ErrorHandler {
         UserDB userDB = UserDB.of(user);
 
         if(Objects.equals(user.getPassword(), userConnectionDTO.password)) {
-            sessionService.removeAllForUserID(userDB.getUser_id());
+            sessionService.removeAllForUserID(userDB.getId());
 
             Session session = new Session(user, LocalDateTime.now().plusHours(EXPIRATION_OF_TOKEN_IN_HOUR));
             sessionService.add(session);

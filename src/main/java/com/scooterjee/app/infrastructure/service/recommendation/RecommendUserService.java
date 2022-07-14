@@ -1,14 +1,16 @@
 package com.scooterjee.app.infrastructure.service.recommendation;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class RecommendUserService {
 
-    //vs advise against, discourage, disuade, warn
     public void recommendUser(Long userId) {
-
+        System.out.println("Recommend user " + userId);
     }
 
-    public void dontRecommendUser(Long userId) {
-
+    public void doNotRecommendUser(Long userId) {
+        System.out.println("Dont recommend user " + userId);
     }
 
 }

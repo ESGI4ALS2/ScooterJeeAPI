@@ -4,6 +4,7 @@ import com.scooterjee.app.domain.address.Address;
 import com.scooterjee.app.domain.categories.Categories;
 import com.scooterjee.app.domain.problem.Problem;
 import com.scooterjee.app.domain.role.Role;
+import com.scooterjee.app.domain.vote.Vote;
 import com.scooterjee.kernel.Entity;
 import com.scooterjee.kernel.email.EmailAddress;
 
@@ -23,14 +24,22 @@ public class User extends Entity<Long> {
 
     private final List<Role> assignedRoles;
 
-    public User(Long id,
-                String firstName, String lastName,
-                String password,
-                String phoneNumber,
-                EmailAddress emailAddress,
-                Address address,
-                List<Categories> assignedCategories,
-                List<Role> assignedRoles) {
+    private final List<Vote> voteReceived;
+
+    private final List<Vote> voteGiven;
+
+    public User(
+        Long id,
+        String firstName, String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address,
+        List<Categories> assignedCategories,
+        List<Role> assignedRoles,
+        List<Vote> voteGiven,
+        List<Vote> voteReceived
+    ) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,6 +49,8 @@ public class User extends Entity<Long> {
         this.address = address;
         this.assignedCategories = assignedCategories;
         this.assignedRoles = assignedRoles;
+        this.voteReceived = voteReceived;
+        this.voteGiven = voteGiven;
     }
 
     public User(
@@ -59,6 +70,8 @@ public class User extends Entity<Long> {
             phoneNumber,
             emailAddress,
             address,
+            new ArrayList<>(),
+            new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>()
         );
@@ -80,6 +93,8 @@ public class User extends Entity<Long> {
             phoneNumber,
             emailAddress,
             address,
+            new ArrayList<>(),
+            new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>()
         );
@@ -158,5 +173,12 @@ public class User extends Entity<Long> {
 
     public List<Role> getAssignedRoles() {
         return assignedRoles;
+    }
+
+    public List<Vote> getVotesReceived() {
+        return voteReceived;
+    }
+    public List<Vote> getVotesGiven() {
+        return voteGiven;
     }
 }

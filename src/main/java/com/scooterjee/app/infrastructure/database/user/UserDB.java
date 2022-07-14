@@ -3,9 +3,11 @@ package com.scooterjee.app.infrastructure.database.user;
 import com.scooterjee.app.domain.categories.Categories;
 import com.scooterjee.app.domain.role.Role;
 import com.scooterjee.app.domain.user.User;
+import com.scooterjee.app.domain.vote.Vote;
 import com.scooterjee.app.infrastructure.database.address.AddressDB;
 import com.scooterjee.app.infrastructure.database.categories.CategoriesDB;
 import com.scooterjee.app.infrastructure.database.role.RoleDB;
+import com.scooterjee.app.infrastructure.database.vote.VoteDB;
 import com.scooterjee.kernel.email.EmailAddress;
 
 import javax.persistence.*;
@@ -32,6 +34,12 @@ public class UserDB {
 
     @OneToOne
     private AddressDB address;
+
+    @OneToMany(mappedBy = "referent")
+    private List<VoteDB> votesReceived;
+
+    @OneToMany(mappedBy = "voter")
+    private List<VoteDB> votesGiven;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -61,7 +69,9 @@ public class UserDB {
         LocalDate registerDate,
         AddressDB address,
         List<RoleDB> roles,
-        List<CategoriesDB> categories
+        List<CategoriesDB> categories,
+        List<VoteDB> votesGiven,
+        List<VoteDB> votesReceived
     ) {
         this.user_id = user_id;
         this.mail = mail;
@@ -73,6 +83,8 @@ public class UserDB {
         this.address = address;
         this.roles = roles;
         this.categories = categories;
+        this.votesGiven = votesGiven;
+        this.votesReceived = votesReceived;
     }
 
     protected UserDB(
@@ -93,6 +105,8 @@ public class UserDB {
             phoneNumber,
             registerDate,
             address,
+            new ArrayList<>(),
+            new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>()
         );
@@ -118,6 +132,8 @@ public class UserDB {
             registerDate,
             address,
             new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
             new ArrayList<>()
         );
     }
@@ -134,36 +150,70 @@ public class UserDB {
             AddressDB.of(user.getAddress()),
             user.getAssignedRoles()
                 .stream()
-                .map(role -> new RoleDB(role.getID(), role.getName()))
+                .map(role -> new RoleDB(
+                    role.getID(),
+                    role.getName()
+                ))
                 .collect(Collectors.toList()),
             user.getAssignedCategories()
                 .stream()
-                .map(categories1 -> new CategoriesDB(categories1.getID(), categories1.getName()))
+                .map(categories1 -> new CategoriesDB(
+                    categories1.getID(),
+                    categories1.getName()
+                ))
+                .collect(Collectors.toList()),
+            user.getVotesReceived()
+                .stream()
+                .map(VoteDB::of)
+                .collect(Collectors.toList()),
+            user.getVotesGiven()
+                .stream()
+                .map(VoteDB::of)
                 .collect(Collectors.toList())
         );
     }
 
     public User toUser() {
         return new User(
-                this.getUser_id(),
-                this.getFirstName(),
-                this.getLastName(),
-                this.getPassword(),
-                this.getPhoneNumber(),
-                new EmailAddress(this.getMail()),
-                this.getAddress().toAddress(),
-                categories
-                    .stream()
-                    .map(categoriesDB -> new Categories(categoriesDB.getCategoriesID(), categoriesDB.getName()))
-                    .collect(Collectors.toList()),
-                roles
-                    .stream()
-                    .map(roleDB -> new Role(roleDB.getRoleID(), roleDB.getName()))
-                    .collect(Collectors.toList())
+            this.getId(),
+            this.getFirstName(),
+            this.getLastName(),
+            this.getPassword(),
+            this.getPhoneNumber(),
+            new EmailAddress(this.getMail()),
+            this.getAddress().toAddress(),
+            categories
+                .stream()
+                .map(categoriesDB -> new Categories(categoriesDB.getCategoriesID(), categoriesDB.getName()))
+                .collect(Collectors.toList()),
+            roles
+                .stream()
+                .map(roleDB -> new Role(roleDB.getRoleID(), roleDB.getName()))
+                .collect(Collectors.toList()),
+            votesReceived
+                .stream()
+                .map(voteDB -> new Vote(
+                    voteDB.getId(),
+                    voteDB.getDateOfVote(),
+                    voteDB.getVoter().toUser(),
+                    voteDB.getReferent().toUser(),
+                    voteDB.getType().toVoteType()
+                ))
+                .collect(Collectors.toList()),
+            votesGiven
+                .stream()
+                .map(voteDB -> new Vote(
+                    voteDB.getId(),
+                    voteDB.getDateOfVote(),
+                    voteDB.getVoter().toUser(),
+                    voteDB.getReferent().toUser(),
+                    voteDB.getType().toVoteType()
+                ))
+                .collect(Collectors.toList())
         );
     }
 
-    public Long getUser_id() {
+    public Long getId() {
         return user_id;
     }
 
@@ -205,5 +255,12 @@ public class UserDB {
 
     public List<CategoriesDB> getCategories() {
         return categories;
+    }
+
+    public List<VoteDB> getVotesReceived() {
+        return votesReceived;
+    }
+    public List<VoteDB> getVotesGiven() {
+        return votesGiven;
     }
 }

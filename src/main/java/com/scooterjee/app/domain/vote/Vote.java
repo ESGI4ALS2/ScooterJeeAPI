@@ -6,7 +6,6 @@ import com.scooterjee.kernel.Entity;
 
 import java.time.LocalDate;
 
-//Un vote n'est ni modifiable ni supprimable
 public class Vote extends Entity<Long> {
     private final LocalDate voteDate;
     private final User voter;
@@ -25,5 +24,21 @@ public class Vote extends Entity<Long> {
         this.voter = voter;
         this.referent = referent;
         this.type = type;
+    }
+
+    public LocalDate getVoteDate() {
+        return voteDate;
+    }
+
+    public User getVoter() {
+        return voter;
+    }
+
+    public User getReferent() {
+        return referent;
+    }
+
+    public VoteType getType() {
+        return type;
     }
 }
