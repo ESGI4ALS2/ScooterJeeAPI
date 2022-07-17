@@ -27,8 +27,8 @@ env:
             key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
             restore-keys: ${{ runner.os }}-m2
 
-        - name: Run Tests
-            run: mvn -B test
+        - name: Run tests
+            run: mvn -B test --file pom.xml
     build:
       name: Build
       runs-on: ubuntu-latest
