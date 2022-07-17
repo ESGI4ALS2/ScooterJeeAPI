@@ -39,20 +39,22 @@ jobs:
         with:
           java-version: '11'
 #      Ajoute les valeurs dans le fichier application.properties
-      - name: Add application.properties
-        uses: christian-draeger/write-properties@1.1.0
-        with:
-          path: './src/main/resources/application.properties'
-          property: |
-            'open_cages.token'
-            'spring.datasource.url'
-            'spring.datasource.username'
-            'spring.datasource.password'
-          value: |
-            ${{ secrets.OPEN_CAGES_TOKEN }}
-            ${{ secrets.AWS_DB }}
-            ${{ secrets.AWS_DB_USER }}
-            ${{ secrets.AWS_DB_PASSWORD }}
+      - name: Create and populate application.properties
+        run: |
+          echo open_cages.token="$OPEN_CAGES_TOKEN" >> ${{ env.PROPERTIES_FILE }}
+          echo spring.datasource.url="$AWS_DB" >> ${{ env.PROPERTIES_FILE }}
+          echo spring.datasource.username="$AWS_DB_USER" >> ${{ env.PROPERTIES_FILE }}
+          echo spring.datasource.password="$AWS_DB_PASSWORD" >> ${{ env.PROPERTIES_FILE }}
+          echo server.port=5000 >> ${{ env.PROPERTIES_FILE }}
+          echo spring.jpa.hibernate.ddl-auto= update >> ${{ env.PROPERTIES_FILE }}
+          echo spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.MySQL5Dialect >> ${{ env.PROPERTIES_FILE }}
+        shell: bash
+        env:
+          PROPERTIES_FILE: './src/main/resources/application.properties'
+          OPEN_CAGES_TOKEN: ${{ secrets.OPEN_CAGES_TOKEN }}
+          AWS_DB: ${{ secrets.AWS_DB }}
+          AWS_DB_USER: ${{ secrets.AWS_DB_USER }}
+          AWS_DB_PASSWORD: ${{ secrets.AWS_DB_PASSWORD }}
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
