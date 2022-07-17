@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: target/data-0.0.1-SNAPSHOT.jar
+          path: target/scooter-jee.jar
 
   deploy:
     needs: build
@@ -86,4 +86,4 @@ jobs:
           environment_name: ScooterJeeAPI-env
           version_label: ${{github.SHA}}
           region: ${{ env.AWS_REGION }}
-          deployment_package: data-0.0.1-SNAPSHOT.jar
+          deployment_package: scooter-jee.jar
