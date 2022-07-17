@@ -82,8 +82,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: Scooter-JEE-env
-          environment_name: Scooter-jee
+          application_name: Scooter-jee
+          environment_name: Scooter-JEE-env
           version_label: ${{github.SHA}}
           region: ${{ env.AWS_REGION }}
           deployment_package: scooter-jee.jar
