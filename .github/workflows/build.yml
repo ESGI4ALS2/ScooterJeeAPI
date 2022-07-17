@@ -7,83 +7,83 @@ env:
   AWS_REGION: 'eu-west-1'
   application_folder: ScooterJeeAPI
 
-  jobs:
-    test:
-      name: Unit tests
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-          name: Checkout Repository
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        name: Checkout Repository
 
-        - name: Set up JDK 1.8
-          uses: actions/setup-java@v1
-          with:
-            java-version: '11'
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
 
-        - name: Cache Maven packages
-          uses: actions/cache@v1
-          with:
-            path: ~/.m2
-            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-            restore-keys: ${{ runner.os }}-m2
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-        - name: Run Tests
-            run: mvn -B test
-    build:
-      name: Build
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-        - name: Set up JDK
-          uses: actions/setup-java@v1
-          with:
-            java-version: '11'
-  #      Ajoute les valeurs dans le fichier application.properties
-        - name: Add application.properties
-            uses: christian-draeger/write-properties@1.1.0
-            with:
-              path: './src/main/resources/application.properties'
-              property: |
-                'open_cages.token'
-                'spring.datasource.url'
-                'spring.datasource.username'
-                'spring.datasource.password'
-              value: |
-                ${{ secrets.OPEN_CAGES_TOKEN }}
-                ${{ secrets.AWS_DB }}
-                ${{ secrets.AWS_DB_USER }}
-                ${{ secrets.AWS_DB_PASSWORD }}
-        - name: Cache Maven packages
-          uses: actions/cache@v1
-          with:
-            path: ~/.m2
-            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-            restore-keys: ${{ runner.os }}-m2
-        - name: Build with Maven
-          run: mvn -B package -DskipTests --file pom.xml
-        - name: Upload JAR
-          uses: actions/upload-artifact@v2
-          with:
-            name: artifact
-            path: target/data-0.0.1-SNAPSHOT.jar
+      - name: Test with Maven
+        run: mvn -B test --file pom.xml
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+#      Ajoute les valeurs dans le fichier application.properties
+      - name: Add application.properties
+        uses: christian-draeger/write-properties@1.1.0
+        with:
+          path: './src/main/resources/application.properties'
+          property: |
+            'open_cages.token'
+            'spring.datasource.url'
+            'spring.datasource.username'
+            'spring.datasource.password'
+          value: |
+            ${{ secrets.OPEN_CAGES_TOKEN }}
+            ${{ secrets.AWS_DB }}
+            ${{ secrets.AWS_DB_USER }}
+            ${{ secrets.AWS_DB_PASSWORD }}
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn -B package -DskipTests --file pom.xml
+      - name: Upload JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: target/data-0.0.1-SNAPSHOT.jar
 
-    deploy:
-      needs: build
-      name: Deploy
-      runs-on: ubuntu-latest
-      environment: production
-      steps:
-        - name: Download JAR
-            uses: actions/download-artifact@v2
-            with:
-              name: artifact
-              - name: Deploy to EB
-                uses: einaregilsson/beanstalk-deploy@v13
-                with:
-                  aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  application_name: ScooterJeeAPI
-                  environment_name: ScooterJeeAPI-env
-                  version_label: ${{github.SHA}}
-                  region: ${{ env.AWS_REGION }}
-                  deployment_package: data-0.0.1-SNAPSHOT.jar
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v13
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ScooterJeeAPI
+          environment_name: ScooterJeeAPI-env
+          version_label: ${{github.SHA}}
+          region: ${{ env.AWS_REGION }}
+          deployment_package: data-0.0.1-SNAPSHOT.jar
