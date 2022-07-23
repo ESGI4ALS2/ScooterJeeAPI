@@ -64,9 +64,14 @@ public class ProblemController extends ErrorHandler {
     }
 
     @PostMapping(value = "/problems")
-    public void postProblem(@RequestBody @Valid CreateProblemDTO createProblemDTO) {
+    public void postProblem(
+        @RequestBody @Valid CreateProblemDTO createProblemDTO,
+        @RequestHeader("uuid") UUID connectedUserId
+        ) {
+        Session userSession = sessionService.get(connectedUserId.toString());
         Scooter scooter = scooterService.get(createProblemDTO.scooterId);
         Categories categories = categoriesService.get(createProblemDTO.categoryId);
+        //On ne devrait pas pouvoir créer de problème avec un status autre que "OPEN"
         ProblemStatus problemStatus = problemStatusService.get(createProblemDTO.problemStatusId);
 
         this.problemService.add(
@@ -78,7 +83,8 @@ public class ProblemController extends ErrorHandler {
                 new Coordinate(createProblemDTO.latitude, createProblemDTO.longitude),
                 LocalDate.now(),
                 categories,
-                problemStatus
+                problemStatus,
+                userSession.getUser()
             )
         );
     }

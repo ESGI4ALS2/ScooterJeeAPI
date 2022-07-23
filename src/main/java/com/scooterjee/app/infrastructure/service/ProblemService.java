@@ -45,5 +45,4 @@ public class ProblemService extends SimpleService<ProblemRepository, Problem, Lo
 
         return list.stream().filter(user::isUserAvailableForProblem).collect(Collectors.toList());
     }
-
 }

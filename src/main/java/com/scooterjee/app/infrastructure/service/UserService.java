@@ -22,6 +22,13 @@ public class UserService extends SimpleService<UserRepository, User, Long> {
         );
     }
 
+    public User getById(Long userId){
+        return repository
+            .get(userId)
+            .orElseThrow(() -> new SimpleServiceObjectNotFoundException("user", userId.toString())
+        );
+    }
+
     public void addCategoryToUser(EmailAddress userEmail, Long categoryID){
         if( !repository.addCategoryToUser(userEmail, categoryID) ){
             throw new SimpleServiceObjectNotFoundException("", userEmail.toString() + " | " +categoryID.toString());

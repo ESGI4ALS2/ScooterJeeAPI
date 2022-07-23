@@ -36,6 +36,9 @@ public class ProblemsDB {
     @OneToOne(fetch = FetchType.EAGER)
     private UserDB referent;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    private UserDB createdBy;
+
     private Double latitude;
 
     private Double longitude;
@@ -52,6 +55,7 @@ public class ProblemsDB {
         String name,
         String description,
         UserDB referent,
+        UserDB createdBy,
         Double latitude,
         Double longitude
     ) {
@@ -63,6 +67,7 @@ public class ProblemsDB {
         this.name = name;
         this.description = description;
         this.referent = referent;
+        this.createdBy = createdBy;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -76,10 +81,23 @@ public class ProblemsDB {
         String name,
         String description,
         UserDB referent,
+        UserDB createdBy,
         Double latitude,
         Double longitude
     ) {
-        this(null, date, scooter, categories, status, name, description, referent, latitude, longitude);
+        this(
+            null,
+            date,
+            scooter,
+            categories,
+            status,
+            name,
+            description,
+            referent,
+            createdBy,
+            latitude,
+            longitude
+        );
     }
 
     public Long getId() {
@@ -132,6 +150,7 @@ public class ProblemsDB {
             problem.getName(),
             problem.getDescription(),
             null,
+            UserDB.of(problem.getCreatedBy()),
             problem.getCoordinate().getLatitude(),
             problem.getCoordinate().getLongitude()
         );
@@ -145,6 +164,7 @@ public class ProblemsDB {
     public Problem toProblem(){
         Problem problem = new Problem(
             null,
+            createdBy.toUser(),
             problemID,
             name,
             description,

@@ -30,7 +30,8 @@ public class User extends Entity<Long> {
 
     public User(
         Long id,
-        String firstName, String lastName,
+        String firstName,
+        String lastName,
         String password,
         String phoneNumber,
         EmailAddress emailAddress,
