@@ -87,57 +87,6 @@ public class UserDB {
         this.votesReceived = votesReceived;
     }
 
-    protected UserDB(
-        String mail,
-        String password,
-        String firstName,
-        String lastName,
-        String phoneNumber,
-        LocalDate registerDate,
-        AddressDB address
-    ) {
-        this(
-            null,
-            mail,
-            password,
-            firstName,
-            lastName,
-            phoneNumber,
-            registerDate,
-            address,
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new ArrayList<>()
-        );
-    }
-
-    protected UserDB(
-        Long user_id,
-        String mail,
-        String password,
-        String firstName,
-        String lastName,
-        String phoneNumber,
-        LocalDate registerDate,
-        AddressDB address
-    ) {
-        this(
-            user_id,
-            mail,
-            password,
-            firstName,
-            lastName,
-            phoneNumber,
-            registerDate,
-            address,
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new ArrayList<>(),
-            new ArrayList<>()
-        );
-    }
-
     public static UserDB of(User user) {
         return new UserDB(
             user.getID(),
