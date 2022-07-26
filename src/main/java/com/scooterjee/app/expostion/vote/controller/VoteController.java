@@ -53,7 +53,7 @@ public class VoteController extends ErrorHandler {
 
         userRecommendationDto.referentId = userId;
         userRecommendationDto.user = userSession.getUser();
-        userRecommendationDto.voteType = VoteType.UP;
+        userRecommendationDto.voteType = VoteType.UP_VOTE;
 
         recommendationService.recommendUser(userRecommendationDto);
         return new ResponseEntity<>(null, HttpStatus.OK);
@@ -73,7 +73,7 @@ public class VoteController extends ErrorHandler {
 
         userRecommendationDto.referentId = userId;
         userRecommendationDto.user = userSession.getUser();
-        userRecommendationDto.voteType = VoteType.DOWN;
+        userRecommendationDto.voteType = VoteType.DOWN_VOTE;
 
         recommendationService.recommendUser(userRecommendationDto);
         return new ResponseEntity<>(null, HttpStatus.OK);

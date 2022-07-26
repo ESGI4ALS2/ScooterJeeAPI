@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class RecommendUserService extends SimpleService<VoteRepository, Vote, Long> {
@@ -50,6 +51,28 @@ public class RecommendUserService extends SimpleService<VoteRepository, Vote, Lo
         );
 
         this.repository.add(recommendation);
+    }
+
+    public float getUserNote(Long userId) {
+        User user = userService.getById(userId);
+        return user.getVotesReceived().stream()
+            .map(vote -> {
+                int sign = vote.getType().equals(VoteType.UP_VOTE) ? 1 : -1;
+                LocalDate dateOfVote = vote.getVoteDate();
+                // si la date est >= à 1 mois : 1 vote vaut 0,75, >= 3 mois : 1 vote vaut 0,5 et >= 6 mois : 1 vote vaut 0,25.
+                if(dateOfVote.isAfter(LocalDate.now().minusMonths(1))) {
+                    return 1f * sign;
+                } else if(dateOfVote.isAfter(LocalDate.now().minusMonths(3))) {
+                    return 0.75f * sign;
+                } else if(dateOfVote.isAfter(LocalDate.now().minusMonths(6))) {
+                    return 0.5f * sign;
+                } else {
+                    return 0.25f * sign;
+                }
+
+            })
+            .reduce(Float::sum)
+            .orElse(0f);
     }
 
 
