@@ -24,7 +24,7 @@ public class UserDB {
     @Column(name = "user_id")
     private Long user_id;
 
-    @Column(unique = true)
+    @Column(unique = true, columnDefinition = "VARCHAR(150)")
     private String mail;
     private String password;
     private String firstName;

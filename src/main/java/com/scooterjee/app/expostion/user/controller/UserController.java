@@ -155,6 +155,13 @@ public class UserController extends ErrorHandler {
         JOpenCageResponse response = jOpenCageGeocoder.forward(request);
         JOpenCageLatLng firstResultLatLng = response.getFirstPosition();
 
+        if(null == firstResultLatLng){
+            System.out.println("Not working. Setting default values");
+            firstResultLatLng = new JOpenCageLatLng();
+            firstResultLatLng.setLat(0.0);
+            firstResultLatLng.setLng(0.1);
+        }
+
         Address address = new Address(
             null,
             createUserDTO.address.city,
@@ -168,6 +175,7 @@ public class UserController extends ErrorHandler {
 
         addressService.add(address);
 
+        //TODO vérifier qu'un utilisateur avec cette adresse mail n'existe pas déjà : sinon il n'est pas enregistré en base
         userService.add(
             new User(
                 null,

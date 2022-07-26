@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 @Table(name = "session")
 @Entity
 public class SessionDB {
-
     @Id
+    private Long sessionId;
+
+    //Ne peut pas être l'identifiant car lance une exception : champ trop long à la création de la base
     private String tokenId;
 
     @OneToOne(fetch = FetchType.LAZY)
