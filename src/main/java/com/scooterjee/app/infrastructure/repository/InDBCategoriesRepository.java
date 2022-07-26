@@ -24,13 +24,7 @@ public class InDBCategoriesRepository implements CategoriesRepository {
 
     @Override
     public Optional<Categories> get(Long key) {
-        Optional<CategoriesDB> categoriesDB = categoriesDBRepository.findById(key);
-
-        if (categoriesDB.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(categoriesDB.get().toCategories());
+        return categoriesDBRepository.findById(key).map(CategoriesDB::toCategories);
     }
 
     @Override
@@ -42,13 +36,17 @@ public class InDBCategoriesRepository implements CategoriesRepository {
 
     @Override
     public boolean update(Categories value) {
-        return false;
+        if (!categoriesDBRepository.existsById(value.getID())) {
+            return false;
+        }
+        categoriesDBRepository.save(CategoriesDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(Long value) {
         categoriesDBRepository.deleteById(value);
-        return categoriesDBRepository.existsById(value);
+        return !categoriesDBRepository.existsById(value);
     }
 
     @Override

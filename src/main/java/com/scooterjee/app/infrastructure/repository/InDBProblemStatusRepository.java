@@ -20,24 +20,12 @@ public class InDBProblemStatusRepository implements ProblemStatusRepository {
     }
 
     public Optional<ProblemStatus> getByName(String name) {
-        Optional<ProblemStatusDB> problemStatusDB = dbRepository.getProblemStatusDBByName(name);
-
-        if(problemStatusDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( problemStatusDB.get().toProblemStatus());
+        return dbRepository.getProblemStatusDBByName(name).map(ProblemStatusDB::toProblemStatus);
     }
 
     @Override
     public Optional<ProblemStatus> get(Long key) {
-        Optional<ProblemStatusDB> problemStatusDB  = dbRepository.findById(key);
-
-        if(problemStatusDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( problemStatusDB.get().toProblemStatus() );
+        return dbRepository.findById(key).map(ProblemStatusDB::toProblemStatus);
     }
 
     @Override
@@ -49,13 +37,17 @@ public class InDBProblemStatusRepository implements ProblemStatusRepository {
 
     @Override
     public boolean update(ProblemStatus value) {
-        return false;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(ProblemStatusDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(Long value) {
         dbRepository.deleteById(value);
-        return dbRepository.existsById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override

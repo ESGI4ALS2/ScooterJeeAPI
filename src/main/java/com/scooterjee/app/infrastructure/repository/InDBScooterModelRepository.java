@@ -21,13 +21,7 @@ public class InDBScooterModelRepository implements ScooterModelRepository {
 
     @Override
     public Optional<ScooterModel> get(Long key) {
-        Optional<ScooterModelDB> scooterModelDB = dbRepository.findById(key);
-
-        if (scooterModelDB.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(scooterModelDB.get().toScooterModel());
+        return dbRepository.findById(key).map(ScooterModelDB::toScooterModel);
     }
 
     @Override
@@ -39,13 +33,17 @@ public class InDBScooterModelRepository implements ScooterModelRepository {
 
     @Override
     public boolean update(ScooterModel value) {
-        return false;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(ScooterModelDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(Long value) {
         dbRepository.deleteById(value);
-        return dbRepository.existsById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override
@@ -57,10 +55,6 @@ public class InDBScooterModelRepository implements ScooterModelRepository {
 
     @Override
     public Optional<ScooterModel> getByName(String name) {
-        Optional<ScooterModelDB> optionalScooterModel = dbRepository.findByName(name);
-        if (optionalScooterModel.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of( optionalScooterModel.get().toScooterModel());
+        return dbRepository.findByName(name).map(ScooterModelDB::toScooterModel);
     }
 }

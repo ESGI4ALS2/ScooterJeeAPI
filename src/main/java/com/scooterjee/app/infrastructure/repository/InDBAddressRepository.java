@@ -5,12 +5,13 @@ import com.scooterjee.app.domain.address.AddressRepository;
 import com.scooterjee.app.infrastructure.database.address.AddressDB;
 import com.scooterjee.app.infrastructure.database.address.AddressDBRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Repository
+@Repository
 public class InDBAddressRepository implements AddressRepository {
 
     @Autowired
@@ -18,7 +19,7 @@ public class InDBAddressRepository implements AddressRepository {
 
     @Override
     public Optional<Address> get(Long key) {
-        return Optional.of(dbRepository.findById(key).orElseThrow().toAddress());
+        return dbRepository.findById(key).map(AddressDB::toAddress);
     }
 
     @Override
@@ -30,13 +31,17 @@ public class InDBAddressRepository implements AddressRepository {
 
     @Override
     public boolean update(Address value) {
-        return false;
+        if(!dbRepository.existsById(value.getID())){
+            return false;
+        }
+        dbRepository.save(AddressDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(Long value) {
         dbRepository.deleteById(value);
-        return dbRepository.existsById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override

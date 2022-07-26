@@ -34,14 +34,9 @@ public class InDBUserRepository implements UserRepository {
         this.roleDBRepository = roleDBRepository;
     }
 
-    public User getByEmail(String email) {
-        UserDB userDB = this.dbRepository.getUserDBByMail(email).orElseThrow();
-        return userDB.toUser();
-    }
-
     @Override
     public Optional<User> get(Long key) {
-        return Optional.empty();
+        return dbRepository.findById(key).map(UserDB::toUser);
     }
 
     @Override
@@ -53,12 +48,17 @@ public class InDBUserRepository implements UserRepository {
 
     @Override
     public boolean update(User value) {
-        return false;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(UserDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(Long value) {
-        return false;
+        dbRepository.deleteById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override
@@ -70,12 +70,7 @@ public class InDBUserRepository implements UserRepository {
 
     @Override
     public Optional<User> getByEmail(EmailAddress emailAddress) {
-        Optional<UserDB> userDB = dbRepository.getUserDBByMail(emailAddress.toString());
-        if(userDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( userDB.get().toUser());
+        return dbRepository.getUserDBByMail(emailAddress.toString()).map(UserDB::toUser);
     }
 
     @Override

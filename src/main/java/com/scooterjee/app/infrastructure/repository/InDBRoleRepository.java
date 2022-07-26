@@ -21,14 +21,7 @@ public class InDBRoleRepository implements RoleRepository {
 
     @Override
     public Optional<Role> get(Long key) {
-
-        Optional<RoleDB> roleDB = dbRepository.findById(key);
-
-        if(roleDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( roleDB.get().toRole());
+        return dbRepository.findById(key).map(RoleDB::toRole);
     }
 
     @Override
@@ -40,7 +33,11 @@ public class InDBRoleRepository implements RoleRepository {
 
     @Override
     public boolean update(Role value) {
-        return false;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(RoleDB.of(value));
+        return true;
     }
 
     @Override

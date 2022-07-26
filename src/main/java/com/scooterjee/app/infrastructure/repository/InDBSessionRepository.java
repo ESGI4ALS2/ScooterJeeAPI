@@ -23,13 +23,7 @@ public class InDBSessionRepository implements SessionRepository {
 
     @Override
     public Optional<Session> get(String key) {
-        Optional<SessionDB> sessionDB = dbRepository.findById(key);
-
-        if(sessionDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( sessionDB.get().toSession());
+        return dbRepository.findById(key).map(SessionDB::toSession);
     }
 
     @Override
@@ -41,13 +35,17 @@ public class InDBSessionRepository implements SessionRepository {
 
     @Override
     public boolean update(Session value) {
-        return false;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(SessionDB.of(value));
+        return true;
     }
 
     @Override
     public boolean remove(String value) {
         dbRepository.deleteById(value);
-        return dbRepository.existsById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override
@@ -66,8 +64,6 @@ public class InDBSessionRepository implements SessionRepository {
 
     @Override
     public Optional<Session> get(UUID id) {
-        SessionDB sessionDB = dbRepository.findById(id.toString()).orElseThrow();
-
-        return Optional.of(sessionDB.toSession());
+        return dbRepository.findById(id.toString()).map(SessionDB::toSession);
     }
 }
