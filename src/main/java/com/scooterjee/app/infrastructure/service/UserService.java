@@ -2,6 +2,7 @@ package com.scooterjee.app.infrastructure.service;
 
 import com.scooterjee.app.domain.user.User;
 import com.scooterjee.app.domain.user.UserRepository;
+import com.scooterjee.app.domain.user.exception.UserAlreadyExistsException;
 import com.scooterjee.kernel.SimpleService;
 import com.scooterjee.kernel.Validator;
 import com.scooterjee.kernel.email.EmailAddress;
@@ -13,6 +14,14 @@ public class UserService extends SimpleService<UserRepository, User, Long> {
 
     public UserService(UserRepository repository, Validator<User> validator) {
         super(repository, validator, "user");
+    }
+
+    @Override
+    public Long add(User value) {
+        if (repository.getByEmail(value.getEmailAddress()).isPresent()) {
+            throw new UserAlreadyExistsException(value.getEmailAddress().toString());
+        }
+        return super.add(value);
     }
 
     public User getByEmail(EmailAddress emailAddress){
