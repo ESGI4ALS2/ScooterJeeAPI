@@ -23,14 +23,14 @@ public abstract class SimpleService<R extends Repository<V, K> , V extends Entit
         return repository.get(key).orElseThrow(() -> getExceptionWhenObjectNotFound(key));
     }
 
-    public void add(V value) {
+    public K add(V value) {
         validator.validate(value);
 
         if (value.getID() != null && repository.get(value.getID()).isPresent()) {
             throw getExceptionWhenObjectAlreadyPresent(value.getID());
         }
 
-        repository.add(value);
+        return repository.add(value);
     }
 
     public void update(V value) {

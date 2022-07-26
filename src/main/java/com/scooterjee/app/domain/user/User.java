@@ -5,9 +5,11 @@ import com.scooterjee.app.domain.categories.Categories;
 import com.scooterjee.app.domain.problem.Problem;
 import com.scooterjee.app.domain.role.Role;
 import com.scooterjee.app.domain.vote.Vote;
+import com.scooterjee.app.domain.vote_type.VoteType;
 import com.scooterjee.kernel.Entity;
 import com.scooterjee.kernel.email.EmailAddress;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,5 +183,26 @@ public class User extends Entity<Long> {
     }
     public List<Vote> getVotesGiven() {
         return voteGiven;
+    }
+
+    public float getRating() {
+        return getVotesReceived().stream()
+            .map(vote -> {
+                int sign = vote.getType().equals(VoteType.UP_VOTE) ? 1 : -1;
+                LocalDate dateOfVote = vote.getVoteDate();
+                // si la date est >= à 1 mois : 1 vote vaut 0,75, >= 3 mois : 1 vote vaut 0,5 et >= 6 mois : 1 vote vaut 0,25.
+                if(dateOfVote.isAfter(LocalDate.now().minusMonths(1))) {
+                    return 1f * sign;
+                } else if(dateOfVote.isAfter(LocalDate.now().minusMonths(3))) {
+                    return 0.75f * sign;
+                } else if(dateOfVote.isAfter(LocalDate.now().minusMonths(6))) {
+                    return 0.5f * sign;
+                } else {
+                    return 0.25f * sign;
+                }
+
+            })
+            .reduce(Float::sum)
+            .orElse(0f);
     }
 }

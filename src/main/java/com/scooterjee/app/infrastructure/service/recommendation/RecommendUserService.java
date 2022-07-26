@@ -52,5 +52,4 @@ public class RecommendUserService extends SimpleService<VoteRepository, Vote, Lo
         this.repository.add(recommendation);
     }
 
-
 }
