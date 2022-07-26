@@ -14,8 +14,11 @@ import java.util.Optional;
 @Repository
 public class InDBAddressRepository implements AddressRepository {
 
-    @Autowired
-    private AddressDBRepository dbRepository;
+    private final AddressDBRepository dbRepository;
+
+    public InDBAddressRepository(AddressDBRepository dbRepository) {
+        this.dbRepository = dbRepository;
+    }
 
     @Override
     public Optional<Address> get(Long key) {
