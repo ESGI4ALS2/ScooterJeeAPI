@@ -52,6 +52,7 @@ public class VoteController extends ErrorHandler {
         userRecommendationDto.voteType = VoteType.UP_VOTE;
 
         recommendationService.recommendUser(userRecommendationDto);
+
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
@@ -72,6 +73,7 @@ public class VoteController extends ErrorHandler {
         userRecommendationDto.voteType = VoteType.DOWN_VOTE;
 
         recommendationService.recommendUser(userRecommendationDto);
+
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

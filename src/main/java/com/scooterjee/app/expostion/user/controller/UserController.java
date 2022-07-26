@@ -2,15 +2,11 @@ package com.scooterjee.app.expostion.user.controller;
 
 import com.scooterjee.app.domain.address.Address;
 import com.scooterjee.app.domain.user.User;
-import com.scooterjee.app.domain.user.exception.UserAlreadyExistsException;
 import com.scooterjee.app.expostion.category.dto.CategoryDTO;
 import com.scooterjee.app.expostion.error.ErrorHandler;
 import com.scooterjee.app.expostion.problem.dto.ProblemDTO;
 import com.scooterjee.app.expostion.role.dto.RoleDTO;
-import com.scooterjee.app.expostion.user.dto.CreateUserDTO;
-import com.scooterjee.app.expostion.user.dto.CreateUserResponse;
-import com.scooterjee.app.expostion.user.dto.UserCategoriesDTO;
-import com.scooterjee.app.expostion.user.dto.UserDTO;
+import com.scooterjee.app.expostion.user.dto.*;
 import com.scooterjee.app.infrastructure.service.AddressService;
 import com.scooterjee.app.infrastructure.service.ProblemService;
 import com.scooterjee.app.infrastructure.service.UserService;
@@ -85,8 +81,7 @@ public class UserController extends ErrorHandler {
             .getAssignedCategories()
             .stream()
             .map(categories -> new CategoryDTO(categories.getID(), categories.getName()))
-            .collect(Collectors.toList()
-        );
+            .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/users/{email}/roles")
@@ -204,7 +199,7 @@ public class UserController extends ErrorHandler {
     }
 
     @GetMapping(value = "/referents")
-    public void getReferents() {
-
+    public ResponseEntity<List<ReferentResponse>> getReferents() {
+        return new ResponseEntity<>(userService.getReferents(),HttpStatus.OK);
     }
 }
