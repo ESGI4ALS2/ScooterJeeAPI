@@ -2,7 +2,7 @@ package com.scooterjee.app.expostion.vote.controller;
 
 import com.scooterjee.app.domain.problem.Problem;
 import com.scooterjee.app.domain.session.Session;
-import com.scooterjee.app.domain.user.User;
+import com.scooterjee.app.domain.vote_type.VoteType;
 import com.scooterjee.app.expostion.error.ErrorHandler;
 import com.scooterjee.app.expostion.vote.dto.UserRecommendationDto;
 import com.scooterjee.app.infrastructure.service.ProblemService;
@@ -53,13 +53,29 @@ public class VoteController extends ErrorHandler {
 
         userRecommendationDto.referentId = userId;
         userRecommendationDto.user = userSession.getUser();
+        userRecommendationDto.voteType = VoteType.UP;
 
         recommendationService.recommendUser(userRecommendationDto);
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping(value = "/user/{userId}/dont-recommend")
-    public void doNotRecommendUser(@PathVariable @Valid long userId) {
-        recommendationService.doNotRecommendUser(userId);
+    public ResponseEntity<String> doNotRecommendUser(
+        @RequestHeader("uuid") UUID connectedUserId,
+        @PathVariable @Valid long userId,
+        @RequestBody @Valid UserRecommendationDto userRecommendationDto
+    ) throws AccessDeniedException {
+        Session userSession = sessionService.get(connectedUserId.toString());
+        Problem problem = problemService.get(userRecommendationDto.problemId);
+        if(!problem.getCreatedBy().equals(userRecommendationDto.user)) {
+            throw new AccessDeniedException("User is not the creator of this problem");
+        }
+
+        userRecommendationDto.referentId = userId;
+        userRecommendationDto.user = userSession.getUser();
+        userRecommendationDto.voteType = VoteType.DOWN;
+
+        recommendationService.recommendUser(userRecommendationDto);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

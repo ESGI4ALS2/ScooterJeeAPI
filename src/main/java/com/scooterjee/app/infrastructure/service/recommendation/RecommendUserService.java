@@ -46,14 +46,11 @@ public class RecommendUserService extends SimpleService<VoteRepository, Vote, Lo
             LocalDate.now(),
             userRecommendationDto.user,
             referent,
-            VoteType.UP
+            userRecommendationDto.voteType
         );
 
         this.repository.add(recommendation);
     }
 
-    public void doNotRecommendUser(Long userId) {
-        System.out.println("Dont recommend user " + userId);
-    }
 
 }
