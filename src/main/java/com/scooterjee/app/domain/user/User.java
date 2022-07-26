@@ -4,6 +4,7 @@ import com.scooterjee.app.domain.address.Address;
 import com.scooterjee.app.domain.categories.Categories;
 import com.scooterjee.app.domain.problem.Problem;
 import com.scooterjee.app.domain.role.Role;
+import com.scooterjee.app.domain.vote.Vote;
 import com.scooterjee.kernel.Entity;
 import com.scooterjee.kernel.email.EmailAddress;
 
@@ -23,14 +24,23 @@ public class User extends Entity<Long> {
 
     private final List<Role> assignedRoles;
 
-    public User(Long id,
-                String firstName, String lastName,
-                String password,
-                String phoneNumber,
-                EmailAddress emailAddress,
-                Address address,
-                List<Categories> assignedCategories,
-                List<Role> assignedRoles) {
+    private final List<Vote> voteReceived;
+
+    private final List<Vote> voteGiven;
+
+    public User(
+        Long id,
+        String firstName,
+        String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address,
+        List<Categories> assignedCategories,
+        List<Role> assignedRoles,
+        List<Vote> voteGiven,
+        List<Vote> voteReceived
+    ) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,17 +50,64 @@ public class User extends Entity<Long> {
         this.address = address;
         this.assignedCategories = assignedCategories;
         this.assignedRoles = assignedRoles;
+        this.voteReceived = voteReceived;
+        this.voteGiven = voteGiven;
     }
 
-    public User(Long id, String firstName, String lastName, String password, String phoneNumber, EmailAddress emailAddress, Address address) {
-        this(id, firstName, lastName, password, phoneNumber, emailAddress, address, new ArrayList<>(), new ArrayList<>());
+    public User(
+        Long id,
+        String firstName,
+        String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address
+    ) {
+        this(
+            id,
+            firstName,
+            lastName,
+            password,
+            phoneNumber,
+            emailAddress,
+            address,
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>()
+        );
     }
 
-    public User(String firstName, String lastName, String password, String phoneNumber, EmailAddress emailAddress, Address address) {
-        this(null, firstName, lastName, password, phoneNumber, emailAddress, address, new ArrayList<>(), new ArrayList<>());
+    public User(
+        String firstName,
+        String lastName,
+        String password,
+        String phoneNumber,
+        EmailAddress emailAddress,
+        Address address
+    ) {
+        this(
+            null,
+            firstName,
+            lastName,
+            password,
+            phoneNumber,
+            emailAddress,
+            address,
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>()
+        );
     }
 
-    private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
+    //TODO déplacer dans ProblemService
+    private double meterDistanceToProblem(
+        double lat_a,
+        double lng_a,
+        double lat_b,
+        double lng_b
+    ) {
         float pk = (float) (180.f/Math.PI);
 
         double a1 = lat_a / pk;
@@ -63,21 +120,28 @@ public class User extends Entity<Long> {
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
+        //earth radius in meters = 6366000
+        //TODO constante
         return 6366000 * tt;
     }
 
+    //TODO déplacer dans ProblemService
     public boolean isUserAvailableForProblem(Problem problem){
 
         if( problem.getReferent() != null){
             return false;
         }
 
-        if(meterDistanceBetweenPoints(problem.getCoordinate().getLatitude(), problem.getCoordinate().getLongitude(),
-                this.address.getLatitude(), this.address.getLongitude()) >= 10000){
-            return false;
-        }
+        double distanceToProblem = meterDistanceToProblem(
+            problem.getCoordinate().getLatitude(),
+            problem.getCoordinate().getLongitude(),
+            this.address.getLatitude(),
+            this.address.getLongitude()
+        );
 
-        return true;
+        //10000 = 10km j'imagine
+        //TODO constante
+        return !(distanceToProblem >= 10000);
     }
 
     public EmailAddress getEmailAddress() {
@@ -110,5 +174,12 @@ public class User extends Entity<Long> {
 
     public List<Role> getAssignedRoles() {
         return assignedRoles;
+    }
+
+    public List<Vote> getVotesReceived() {
+        return voteReceived;
+    }
+    public List<Vote> getVotesGiven() {
+        return voteGiven;
     }
 }

@@ -23,15 +23,22 @@ public class CategoryController extends ErrorHandler {
 
     @GetMapping(value = "/categories")
     public List<CategoryDTO> getCategory() {
-        return categoriesService.getAll().stream()
-                .map(categories -> new CategoryDTO(categories.getID(), categories.getName())).collect(Collectors.toList());
+        return categoriesService
+            .getAll()
+            .stream()
+            .map(categories -> new CategoryDTO(categories.getID(), categories.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/categories/{id}/users")
     public List<UserDTO> getAllCategoriesUser(@PathVariable @Valid Long id) {
-        return categoriesService.getAllCategoriesUsers(id).stream()
-                .map(user -> UserDTO.of(user))
-                .collect(Collectors.toList());
+        return categoriesService
+            .getAllCategoriesUsers(id)
+            .stream()
+            .map(user -> UserDTO.of(user))
+            .collect(Collectors.toList()
+        );
     }
 
     @PostMapping(value = "/categories")

@@ -1,7 +1,6 @@
 package com.scooterjee.app.expostion.user.controller;
 
 import com.scooterjee.app.domain.address.Address;
-import com.scooterjee.app.domain.address.exception.InvalidAddressException;
 import com.scooterjee.app.domain.user.User;
 import com.scooterjee.app.expostion.category.dto.CategoryDTO;
 import com.scooterjee.app.expostion.error.ErrorHandler;

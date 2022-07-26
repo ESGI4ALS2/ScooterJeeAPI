@@ -17,10 +17,21 @@ public class Problem extends Entity<Long> {
     private final Coordinate coordinate;
     private final LocalDate date;
     private final Categories categories;
+    private final User createdBy;
     private User referent;
     private ProblemStatus status;
 
-    public Problem(Long id, String name, String description, Scooter scooter, Coordinate coordinate, LocalDate date, Categories categories, ProblemStatus status) {
+    public Problem(
+        Long id,
+        String name,
+        String description,
+        Scooter scooter,
+        Coordinate coordinate,
+        LocalDate date,
+        Categories categories,
+        ProblemStatus status,
+        User createdBy
+    ) {
         super(id);
         this.name = name;
         this.description = description;
@@ -29,9 +40,21 @@ public class Problem extends Entity<Long> {
         this.date = date;
         this.categories = categories;
         this.status = status;
+        this.createdBy = createdBy;
     }
 
-    public Problem(User referent, Long id, String name, String description, Scooter scooter, Coordinate coordinate, LocalDate date, Categories categories, ProblemStatus status) {
+    public Problem(
+        User referent,
+        User createdBy,
+        Long id,
+        String name,
+        String description,
+        Scooter scooter,
+        Coordinate coordinate,
+        LocalDate date,
+        Categories categories,
+        ProblemStatus status
+    ) {
         super(id);
         this.name = name;
         this.description = description;
@@ -41,6 +64,7 @@ public class Problem extends Entity<Long> {
         this.categories = categories;
         this.status = status;
         this.referent = referent;
+        this.createdBy = createdBy;
     }
 
     public String getName() {
@@ -81,5 +105,9 @@ public class Problem extends Entity<Long> {
 
     public void setReferent(User referent) {
         this.referent = referent;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
     }
 }

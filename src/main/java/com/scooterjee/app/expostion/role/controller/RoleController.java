@@ -23,7 +23,12 @@ public class RoleController extends ErrorHandler {
 
     @GetMapping(value = "/roles")
     public List<RoleDTO> getUsers() {
-        return roleService.getAll().stream().map(role -> new RoleDTO(role.getID(), role.getName())).collect(Collectors.toList());
+        return roleService
+            .getAll()
+            .stream()
+            .map(role -> new RoleDTO(role.getID(), role.getName()))
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/roles/{id}")

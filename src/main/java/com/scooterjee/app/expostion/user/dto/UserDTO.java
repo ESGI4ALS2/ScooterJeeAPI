@@ -23,7 +23,14 @@ public class UserDTO {
     public List<RoleDTO> roles;
 
 
-    public UserDTO(String email, String lastname, String firstname, String address, String phoneNumber, List<RoleDTO> roles) {
+    public UserDTO(
+        String email,
+        String lastname,
+        String firstname,
+        String address,
+        String phoneNumber,
+        List<RoleDTO> roles
+    ) {
         this.email = email;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -34,11 +41,15 @@ public class UserDTO {
 
     public static UserDTO of(User user) {
         return new UserDTO(
-                user.getEmailAddress().toString(),
-                user.getLastName(),
-                user.getFirstName(),
-                user.getAddress().toString(),
-                user.getPhoneNumber(),
-                user.getAssignedRoles().stream().map(role -> new RoleDTO(role.getID(), role.getName())).collect(Collectors.toList()) );
+            user.getEmailAddress().toString(),
+            user.getLastName(),
+            user.getFirstName(),
+            user.getAddress().toString(),
+            user.getPhoneNumber(),
+            user.getAssignedRoles()
+                .stream()
+                .map(role -> new RoleDTO(role.getID(), role.getName()))
+                .collect(Collectors.toList())
+        );
     }
 }

@@ -33,11 +33,13 @@ public class ProblemController extends ErrorHandler {
 
     private final SessionService sessionService;
 
-    public ProblemController(ProblemService problemService,
-                             ProblemStatusService problemStatusService,
-                             CategoriesService categoriesService,
-                             ScooterService scooterService,
-                             SessionService sessionService) {
+    public ProblemController(
+        ProblemService problemService,
+        ProblemStatusService problemStatusService,
+        CategoriesService categoriesService,
+        ScooterService scooterService,
+        SessionService sessionService
+    ) {
         this.problemService = problemService;
         this.problemStatusService = problemStatusService;
         this.categoriesService = categoriesService;
@@ -47,9 +49,12 @@ public class ProblemController extends ErrorHandler {
 
     @GetMapping(value = "/problems")
     public List<ProblemDTO> getAllProblems() {
-        return problemService.getAll().stream()
-                .map(ProblemDTO::of)
-                .collect(Collectors.toList());
+        return problemService
+            .getAll()
+            .stream()
+            .map(ProblemDTO::of)
+            .collect(Collectors.toList()
+        );
     }
 
     @GetMapping(value = "/problems/{id}")
@@ -59,12 +64,18 @@ public class ProblemController extends ErrorHandler {
     }
 
     @PostMapping(value = "/problems")
-    public void postProblem(@RequestBody @Valid CreateProblemDTO createProblemDTO) {
+    public void postProblem(
+        @RequestBody @Valid CreateProblemDTO createProblemDTO,
+        @RequestHeader("uuid") UUID connectedUserId
+        ) {
+        Session userSession = sessionService.get(connectedUserId.toString());
         Scooter scooter = scooterService.get(createProblemDTO.scooterId);
         Categories categories = categoriesService.get(createProblemDTO.categoryId);
+        //On ne devrait pas pouvoir créer de problème avec un status autre que "OPEN"
         ProblemStatus problemStatus = problemStatusService.get(createProblemDTO.problemStatusId);
 
-        this.problemService.add(new Problem(
+        this.problemService.add(
+            new Problem(
                 null,
                 createProblemDTO.name,
                 createProblemDTO.description,
@@ -72,8 +83,10 @@ public class ProblemController extends ErrorHandler {
                 new Coordinate(createProblemDTO.latitude, createProblemDTO.longitude),
                 LocalDate.now(),
                 categories,
-                problemStatus
-        ));
+                problemStatus,
+                userSession.getUser()
+            )
+        );
     }
 
     @PutMapping(value = "/problems/{id}")
@@ -83,10 +96,16 @@ public class ProblemController extends ErrorHandler {
     }
 
     @PutMapping(value = "/problems/{id}/status/{statusId}")
-    public void putStatusOnProblem(@RequestHeader("uuid") UUID uuid, @PathVariable @Valid Long id, @PathVariable @Valid Long statusId) {
+    public void putStatusOnProblem(
+        @RequestHeader("uuid") UUID uuid,
+        @PathVariable @Valid Long id,
+        @PathVariable @Valid Long statusId
+    ) {
         Session userSession = sessionService.get(uuid.toString());
         Problem problem = problemService.get(id);
-        if (problem.getReferent() == null && !Objects.equals(problem.getReferent().getID(), userSession.getUser().getID())) {
+
+        boolean userIsProblemReferent = !Objects.equals(problem.getReferent().getID(), userSession.getUser().getID());
+        if (problem.getReferent() == null && !userIsProblemReferent) {
             throw new SimpleServiceException("Only the referent on the problem can close it");
         }
         ProblemStatus problemStatus = problemStatusService.get(statusId);

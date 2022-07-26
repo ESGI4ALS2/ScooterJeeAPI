@@ -47,10 +47,15 @@ public class SessionDB {
     }
 
     public static SessionDB of(Session session) {
-        SessionDB sessionDB = new SessionDB(session.getTokenID(), UserDB.of(session.getUser()), session.getExpirationDate());
+        SessionDB sessionDB = new SessionDB(
+            session.getTokenID(),
+            UserDB.of(session.getUser()),
+            session.getExpirationDate()
+        );
         if (sessionDB.tokenId == null) {
             sessionDB.tokenId = java.util.UUID.randomUUID().toString();
         }
+
         return sessionDB;
     }
 

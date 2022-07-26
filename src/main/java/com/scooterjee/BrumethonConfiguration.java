@@ -18,6 +18,8 @@ import com.scooterjee.app.domain.session.Session;
 import com.scooterjee.app.domain.session.SessionValidator;
 import com.scooterjee.app.domain.user.User;
 import com.scooterjee.app.domain.user.UserValidator;
+import com.scooterjee.app.domain.vote.Vote;
+import com.scooterjee.app.domain.vote.VoteValidator;
 import com.scooterjee.kernel.Validator;
 import com.scooterjee.kernel.email.EmailAddress;
 import com.scooterjee.kernel.email.EmailAddressValidator;
@@ -77,5 +79,10 @@ public class BrumethonConfiguration {
     @Bean
     public Validator<Problem> getProblemValidator() {
         return new ProblemValidator();
+    }
+
+    @Bean
+    public Validator<Vote> getVoteValidator() {
+        return new VoteValidator();
     }
 }

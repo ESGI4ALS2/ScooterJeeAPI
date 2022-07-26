@@ -14,7 +14,10 @@ public class ProblemStatusService extends SimpleService<ProblemStatusRepository,
     }
 
     public ProblemStatus getByName(String name){
-        return repository.getByName(name).orElseThrow(() -> new SimpleServiceObjectNotFoundException("problem status", name));
+        return repository
+            .getByName(name)
+            .orElseThrow(() -> new SimpleServiceObjectNotFoundException("problem status", name)
+        );
     }
 
 }

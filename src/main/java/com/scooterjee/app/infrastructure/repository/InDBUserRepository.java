@@ -24,7 +24,11 @@ public class InDBUserRepository implements UserRepository {
 
     private final RoleDBRepository roleDBRepository;
 
-    public InDBUserRepository(UserDBRepository dbRepository, CategoriesDBRepository categoriesDBRepository, RoleDBRepository roleDBRepository) {
+    public InDBUserRepository(
+        UserDBRepository dbRepository,
+        CategoriesDBRepository categoriesDBRepository,
+        RoleDBRepository roleDBRepository
+    ) {
         this.dbRepository = dbRepository;
         this.categoriesDBRepository = categoriesDBRepository;
         this.roleDBRepository = roleDBRepository;
@@ -43,8 +47,8 @@ public class InDBUserRepository implements UserRepository {
     @Override
     public Long add(User value) {
         UserDB userDB = dbRepository.save(UserDB.of(value));
-        value.setId(userDB.getUser_id());
-        return userDB.getUser_id();
+        value.setId(userDB.getId());
+        return userDB.getId();
     }
 
     @Override

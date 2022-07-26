@@ -28,7 +28,13 @@ public class ScooterDB {
     public ScooterDB() {
     }
 
-    public ScooterDB(Long scooterID, String serialNumber, LocalDate dateOfPurchase, ScooterModelDB scooterModel, UserDB user) {
+    public ScooterDB(
+        Long scooterID,
+        String serialNumber,
+        LocalDate dateOfPurchase,
+        ScooterModelDB scooterModel,
+        UserDB user
+    ) {
         this.scooterID = scooterID;
         this.serialNumber = serialNumber;
         this.dateOfPurchase = dateOfPurchase;
@@ -58,15 +64,23 @@ public class ScooterDB {
     }
 
     public static ScooterDB of(Scooter scooter) {
-        return new ScooterDB(scooter.getID(), scooter.getSerialNumber(), scooter.getPurchaseDate(),
-                ScooterModelDB.of(scooter.getModel()),
-                UserDB.of(scooter.getOwner()));
+        return new ScooterDB(
+            scooter.getID(),
+            scooter.getSerialNumber(),
+            scooter.getPurchaseDate(),
+            ScooterModelDB.of(scooter.getModel()),
+            UserDB.of(scooter.getOwner())
+        );
     }
 
     public Scooter toScooter() {
-        return new Scooter(scooterID, serialNumber,
-                scooterModel.toScooterModel(), user.toUser(),
-                dateOfPurchase);
+        return new Scooter(
+            scooterID,
+            serialNumber,
+            scooterModel.toScooterModel(),
+            user.toUser(),
+            dateOfPurchase
+        );
     }
 
 }

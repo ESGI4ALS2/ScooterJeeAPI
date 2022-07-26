@@ -25,7 +25,19 @@ public class ProblemDTO {
     public ProblemDTO() {
     }
 
-    public ProblemDTO(Long id, String name, String description, ScooterDTO scooterDTO, Double latitude, Double longitude, LocalDate date, UserDTO owner, UserDTO referent, CategoryDTO categoryDTO, ProblemStatusDTO status) {
+    public ProblemDTO(
+        Long id,
+        String name,
+        String description,
+        ScooterDTO scooterDTO,
+        Double latitude,
+        Double longitude,
+        LocalDate date,
+        UserDTO owner,
+        UserDTO referent,
+        CategoryDTO categoryDTO,
+        ProblemStatusDTO status
+    ) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -44,16 +56,25 @@ public class ProblemDTO {
         if (problem.getReferent() != null) {
             referent = UserDTO.of(problem.getReferent());
         }
-        return new ProblemDTO(problem.getID(),
-                problem.getName(),
-                problem.getDescription(),
-                new ScooterDTO(problem.getScooter().getID(), problem.getScooter().getModel().getID(), problem.getScooter().getSerialNumber()),
-                problem.getCoordinate().getLatitude(),
-                problem.getCoordinate().getLongitude(),
-                problem.getDate(),
-                UserDTO.of(problem.getScooter().getOwner()),
-                referent,
-                new CategoryDTO(problem.getCategories().getID(), problem.getCategories().getName()),
-                new ProblemStatusDTO(problem.getStatus().getID(), problem.getStatus().getName()));
+
+        ScooterDTO scooter = new ScooterDTO(
+            problem.getScooter().getID(),
+            problem.getScooter().getModel().getID(),
+            problem.getScooter().getSerialNumber()
+        );
+
+        return new ProblemDTO(
+            problem.getID(),
+            problem.getName(),
+            problem.getDescription(),
+            scooter,
+            problem.getCoordinate().getLatitude(),
+            problem.getCoordinate().getLongitude(),
+            problem.getDate(),
+            UserDTO.of(problem.getScooter().getOwner()),
+            referent,
+            new CategoryDTO(problem.getCategories().getID(), problem.getCategories().getName()),
+            new ProblemStatusDTO(problem.getStatus().getID(), problem.getStatus().getName())
+        );
     }
 }
