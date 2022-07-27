@@ -22,14 +22,7 @@ public class InDBProblemRepository implements ProblemRepository {
 
     @Override
     public Optional<Problem> get(Long key) {
-        Optional<ProblemsDB> problemsDB = dbRepository.findById(key);
-
-
-        if(problemsDB.isEmpty()){
-            return Optional.empty();
-        }
-
-        return Optional.of( problemsDB.get().toProblem());
+        return dbRepository.findById(key).map(ProblemsDB::toProblem);
     }
 
     @Override
@@ -41,6 +34,9 @@ public class InDBProblemRepository implements ProblemRepository {
 
     @Override
     public boolean update(Problem value) {
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
         dbRepository.save(ProblemsDB.of(value));
         return true;
     }
@@ -48,7 +44,7 @@ public class InDBProblemRepository implements ProblemRepository {
     @Override
     public boolean remove(Long value) {
         dbRepository.deleteById(value);
-        return dbRepository.existsById(value);
+        return !dbRepository.existsById(value);
     }
 
     @Override
