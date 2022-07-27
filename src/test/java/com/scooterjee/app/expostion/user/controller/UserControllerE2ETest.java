@@ -134,6 +134,12 @@ class UserControllerE2ETest {
             .andExpect(MockMvcResultMatchers.content().string(""));
 
         mvc.perform(MockMvcRequestBuilders.post("/problemstatus")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\" : \"waiting for review\"}"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().string(""));
+
+        mvc.perform(MockMvcRequestBuilders.post("/problemstatus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"closed\"}"))
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -142,7 +148,7 @@ class UserControllerE2ETest {
         mvc.perform(MockMvcRequestBuilders.get("/problemstatus"))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().json(
-                "[{\"id\":1,\"name\":\"open\"}, {\"id\":2,\"name\":\"closed\"}]"));
+                "[{\"id\":1,\"name\":\"open\"}, {\"id\":2,\"name\":\"waiting for review\"}, {\"id\":3,\"name\":\"closed\"}]"));
 
         //create problem
         mvc.perform(MockMvcRequestBuilders.get("/problems"))
@@ -177,7 +183,7 @@ class UserControllerE2ETest {
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string(""));
 
-        //see all avaible pb disponible for ame
+        //see all available pb for ame
         mvc.perform(MockMvcRequestBuilders.get("/users/adouillard@myges.fr/availableproblems"))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().json("[{\"id\":1,\"name\":\"Problème de freins\",\"description\":\"Quand je freine bah la batterie se coupe et je freine pas :,(\",\"scooter\":{\"id\":1,\"scooterModelID\":1,\"serialNumber\":\"000251\"},\"latitude\":47.9029,\"longitude\":1.9039,\"date\":\"2022-07-27\",\"owner\":{\"email\":\"pabib@myges.fr\",\"lastname\":\"Abib\",\"firstname\":\"Paul Adil\",\"address\":\"null inconnus, 75011 France\",\"phoneNumber\":\"0102030405\",\"roles\":[]},\"referent\":null,\"category\":{\"id\":1,\"name\":\"category\"},\"status\":{\"id\":1,\"name\":\"open\"}}]"));
@@ -194,13 +200,41 @@ class UserControllerE2ETest {
             .andExpect(MockMvcResultMatchers.content().string(""));
 
         //verify if ame is assigned to the problem
-        mvc.perform(MockMvcRequestBuilders.get("/problems"))
+       mvc.perform(MockMvcRequestBuilders.get("/problems"))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().json(
-                "[[{\"id\":1,\"name\":\"Problème de freins\",\"description\":\"Quand je freine bah la batterie se coupe et je freine pas :,(\",\"scooter\":{\"id\":1,\"scooterModelID\":1,\"serialNumber\":\"000251\"},\"latitude\":47.9029,\"longitude\":1.9039,\"date\":\"2022-07-27\",\"owner\":{\"email\":\"pabib@myges.fr\",\"lastname\":\"Abib\",\"firstname\":\"Paul Adil\",\"address\":\"null inconnus, 75011 France\",\"phoneNumber\":\"0102030405\",\"roles\":[]},\"referent\":{\"email\":\"adouillard@myges.fr\",\"lastname\":\"Douillard Petite\",\"firstname\":\"Amélie Vieille\",\"address\":\"null mayenne, 45000 France\",\"phoneNumber\":\"0102030405\",\"roles\":[]},\"category\":{\"id\":1,\"name\":\"category\"},\"status\":{\"id\":1,\"name\":\"open\"}}]]"));
+                "[{\"id\":1,\"name\":\"Problème de freins\",\"description\":\"Quand je freine bah la batterie se coupe et je freine pas :,(\",\"scooter\":{\"id\":1,\"scooterModelID\":1,\"serialNumber\":\"000251\"},\"latitude\":47.9029,\"longitude\":1.9039,\"date\":\"2022-07-27\",\"owner\":{\"email\":\"pabib@myges.fr\",\"lastname\":\"Abib\",\"firstname\":\"Paul Adil\",\"address\":\"null inconnus, 75011 France\",\"phoneNumber\":\"0102030405\",\"roles\":[]},\"referent\":{\"email\":\"adouillard@myges.fr\",\"lastname\":\"Douillard Petite\",\"firstname\":\"Amélie Vieille\",\"address\":\"null mayenne, 45000 France\",\"phoneNumber\":\"0102030405\",\"roles\":[]},\"category\":{\"id\":1,\"name\":\"category\"},\"status\":{\"id\":1,\"name\":\"open\"}}]"));
 
-        //paul can't resolve the problem
+        //paul can't resolve the problem (can't close)
+        mvc.perform(MockMvcRequestBuilders.put("/problems/1/status/2")
+                        .header(UUID_HEADER, sessionPaul.token))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.content().json("{\"message\":\"Only the referent on the problem can close it\"}"));
 
+        //ame resolves the problem
+        mvc.perform(MockMvcRequestBuilders.put("/problems/1/status/2")
+                        .header(UUID_HEADER, sessionAme.token))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().string(""));
+
+        //ame should not see problem in available list anymore
+        mvc.perform(MockMvcRequestBuilders.get("/users/adouillard@myges.fr/availableproblems"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().json("[]"));
+
+        //paul should be able to recommend (or not) the referent
+        mvc.perform(MockMvcRequestBuilders.post("/user/2/recommend")
+                        .header(UUID_HEADER, sessionPaul.token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"problemId\":1}"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().string(""));
+
+
+        //now we are able to see the recommendation
+        mvc.perform(MockMvcRequestBuilders.get("/referents"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().json("[]"));
     }
 
 }
