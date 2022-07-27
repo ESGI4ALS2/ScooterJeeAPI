@@ -15,7 +15,15 @@ public class CategoriesService extends SimpleService<CategoriesRepository, Categ
         super(repository, validator, "categories");
     }
 
-    public List<User> getAllCategoriesUsers(Long categoryID){
+    public List<User> getAllCategoriesUsers(Long categoryID) {
         return repository.getAllCategoriesUsers(categoryID);
+    }
+
+    @Override
+    public Long add(Categories value) {
+        if (repository.getByName(value.getName()).isPresent()) {
+            throw getExceptionWhenObjectAlreadyPresent(0L);
+        }
+        return super.add(value);
     }
 }

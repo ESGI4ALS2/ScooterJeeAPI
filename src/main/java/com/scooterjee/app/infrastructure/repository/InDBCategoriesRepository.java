@@ -28,6 +28,11 @@ public class InDBCategoriesRepository implements CategoriesRepository {
     }
 
     @Override
+    public Optional<Categories> getByName(String key) {
+        return categoriesDBRepository.getCategoriesDBSByName(key).map(CategoriesDB::toCategories);
+    }
+
+    @Override
     public Long add(Categories value) {
         CategoriesDB categoriesDB = categoriesDBRepository.save(CategoriesDB.of(value));
         value.setId(categoriesDB.getCategoriesID());

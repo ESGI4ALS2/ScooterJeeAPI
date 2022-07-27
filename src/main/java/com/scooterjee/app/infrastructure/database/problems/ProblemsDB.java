@@ -72,34 +72,6 @@ public class ProblemsDB {
         this.longitude = longitude;
     }
 
-    //TODO pourquoi on l'a si on s'en sert pas ?
-    public ProblemsDB(
-        LocalDate date,
-        ScooterDB scooter,
-        CategoriesDB categories,
-        ProblemStatusDB status,
-        String name,
-        String description,
-        UserDB referent,
-        UserDB createdBy,
-        Double latitude,
-        Double longitude
-    ) {
-        this(
-            null,
-            date,
-            scooter,
-            categories,
-            status,
-            name,
-            description,
-            referent,
-            createdBy,
-            latitude,
-            longitude
-        );
-    }
-
     public Long getId() {
         return problemID;
     }

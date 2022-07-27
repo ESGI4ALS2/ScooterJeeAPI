@@ -30,7 +30,7 @@ public class ProblemStatusController extends ErrorHandler {
     }
 
     @GetMapping(value = "/problemstatus/{status}")
-    public ProblemStatusDTO getProblemStatusByName(@PathVariable @Valid String status) {
+    public ProblemStatusDTO getProblemStatusByName(@PathVariable String status) {
         ProblemStatus problemStatus = problemStatusService.getByName(status);
 
         return new ProblemStatusDTO(problemStatus.getID(), problemStatus.getName());

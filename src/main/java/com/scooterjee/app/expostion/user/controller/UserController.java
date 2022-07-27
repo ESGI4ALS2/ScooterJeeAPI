@@ -69,13 +69,13 @@ public class UserController extends ErrorHandler {
     }
 
     @GetMapping(value = "/users/{email}")
-    public UserDTO getUserByEmail(@PathVariable @Valid String email) {
+    public UserDTO getUserByEmail(@PathVariable String email) {
         User user = userService.getByEmail(new EmailAddress(email));
         return UserDTO.of(user);
     }
 
     @GetMapping(value = "/users/{email}/categories")
-    public List<CategoryDTO> getUserCategories(@PathVariable @Valid String email) {
+    public List<CategoryDTO> getUserCategories(@PathVariable String email) {
         User user = userService.getByEmail(new EmailAddress(email));
         return user
             .getAssignedCategories()
@@ -85,7 +85,7 @@ public class UserController extends ErrorHandler {
     }
 
     @GetMapping(value = "/users/{email}/roles")
-    public List<RoleDTO> getUserRoles(@PathVariable @Valid String email) {
+    public List<RoleDTO> getUserRoles(@PathVariable String email) {
         User user = userService.getByEmail(new EmailAddress(email));
         return user
             .getAssignedRoles()
@@ -96,7 +96,7 @@ public class UserController extends ErrorHandler {
     }
 
     @GetMapping(value = "/users/{email}/availableproblems")
-    public List<ProblemDTO> getUserAvailableProblem(@PathVariable @Valid String email) {
+    public List<ProblemDTO> getUserAvailableProblem(@PathVariable String email) {
         User user = userService.getByEmail(new EmailAddress(email));
         return problemService.getAllAvailable(user).stream()
                 .map(ProblemDTO::of)
@@ -104,13 +104,13 @@ public class UserController extends ErrorHandler {
     }
 
     @PostMapping(value = "/users/{email}/categories/{id}")
-    public void addUserCategories(@PathVariable @Valid String email, @PathVariable @Valid Long id) {
+    public void addUserCategories(@PathVariable String email, @PathVariable Long id) {
         userService.addCategoryToUser(new EmailAddress(email), id);
     }
 
     @PostMapping(value = "/users/{email}/categories")
     public void addUserCategories(
-        @PathVariable @Valid String email,
+        @PathVariable String email,
         @RequestBody @Valid UserCategoriesDTO userCategoriesDTO
     ) {
         for (Long id: userCategoriesDTO.list ) {
@@ -120,7 +120,7 @@ public class UserController extends ErrorHandler {
 
     @PostMapping(value = "/users/{email}/roles")
     public void addUserRoles(
-        @PathVariable @Valid String email,
+        @PathVariable String email,
         @RequestBody @Valid UserCategoriesDTO userCategoriesDTO
     ) {
         for (Long id: userCategoriesDTO.list ) {
@@ -130,8 +130,8 @@ public class UserController extends ErrorHandler {
 
     @PostMapping(value = "/users/{email}/roles/{id}")
     public void addUserRoles(
-        @PathVariable @Valid String email,
-        @PathVariable @Valid Long id
+        @PathVariable String email,
+        @PathVariable Long id
     ) {
         userService.addRoleToUser(new EmailAddress(email), id);
     }
@@ -192,8 +192,8 @@ public class UserController extends ErrorHandler {
 
     @DeleteMapping(value = "/users/{email}/roles/{id}")
     public void deleteRoleForUser(
-        @PathVariable @Valid String email,
-        @PathVariable @Valid Long id
+        @PathVariable String email,
+        @PathVariable Long id
     ) {
         userService.removeRoleToUser(new EmailAddress(email), id);
     }

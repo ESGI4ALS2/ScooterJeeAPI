@@ -50,7 +50,7 @@ public class VoteDB {
 
     public Vote toVote() {
         return new Vote(
-            0L, // ?????
+            0L,
             this.dateOfVote,
             this.voter.toUser(),
             this.referent.toUser(),

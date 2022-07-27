@@ -32,7 +32,7 @@ public class RoleController extends ErrorHandler {
     }
 
     @GetMapping(value = "/roles/{id}")
-    public RoleDTO getUsers(@PathVariable @Valid Long id) {
+    public RoleDTO getUsers(@PathVariable Long id) {
         Role role = roleService.get(id);
         return new RoleDTO(role.getID(),role.getName());
     }
@@ -43,7 +43,7 @@ public class RoleController extends ErrorHandler {
     }
 
     @DeleteMapping(value = "/roles/{id}")
-    public void deleteCategory(@PathVariable @Valid Long id) {
+    public void deleteCategory(@PathVariable Long id) {
         roleService.remove(id);
     }
 }

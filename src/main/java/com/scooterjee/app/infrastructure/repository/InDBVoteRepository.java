@@ -6,6 +6,7 @@ import com.scooterjee.app.infrastructure.database.vote.VoteDB;
 import com.scooterjee.app.infrastructure.database.vote.VoteDBRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,11 @@ public class InDBVoteRepository implements VoteRepository {
 
     @Override
     public boolean update(Vote value) {
-        return dbRepository.save(VoteDB.of(value)) != null;
+        if (!dbRepository.existsById(value.getID())) {
+            return false;
+        }
+        dbRepository.save(VoteDB.of(value));
+        return true;
     }
 
     @Override
@@ -41,6 +46,9 @@ public class InDBVoteRepository implements VoteRepository {
 
     @Override
     public List<Vote> getAll() {
-        return null;
+        List<Vote> list = new ArrayList<>();
+
+        dbRepository.findAll().forEach(voteDB -> list.add( voteDB.toVote()));
+        return list;
     }
 }

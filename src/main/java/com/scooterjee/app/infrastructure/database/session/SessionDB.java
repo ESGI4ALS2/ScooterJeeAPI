@@ -3,6 +3,7 @@ package com.scooterjee.app.infrastructure.database.session;
 import com.scooterjee.app.domain.session.Session;
 import com.scooterjee.app.infrastructure.database.user.UserDB;
 
+import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -10,9 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 public class SessionDB {
     @Id
-    private Long sessionId;
-
-    //Ne peut pas être l'identifiant car lance une exception : champ trop long à la création de la base
+    @Column(unique = true, columnDefinition = "VARCHAR(50)")
     private String tokenId;
 
     @OneToOne(fetch = FetchType.LAZY)
