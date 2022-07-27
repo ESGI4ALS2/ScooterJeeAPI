@@ -153,7 +153,7 @@ public class UserDB {
                 .map(voteDB -> new Vote(
                     voteDB.getId(),
                     voteDB.getDateOfVote(),
-                    null,
+                    voteDB.getVoter().toUser(),
                     voteDB.getReferent().toUser(),
                     voteDB.getType().toVoteType()
                 ))
