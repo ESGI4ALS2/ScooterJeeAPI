@@ -3,6 +3,7 @@ package com.scooterjee.app.expostion.vote.controller;
 import com.scooterjee.app.domain.problem.Problem;
 import com.scooterjee.app.domain.session.Session;
 import com.scooterjee.app.domain.user.exception.OperationNotPermittedException;
+import com.scooterjee.app.domain.vote.UserRecommendation;
 import com.scooterjee.app.domain.vote_type.VoteType;
 import com.scooterjee.app.expostion.error.ErrorHandler;
 import com.scooterjee.app.expostion.vote.dto.UserRecommendationDto;
@@ -43,15 +44,19 @@ public class VoteController extends ErrorHandler {
     ) {
         Session userSession = sessionService.get(connectedUserId.toString());
         Problem problem = problemService.get(userRecommendationDto.problemId);
-        if(!problem.getCreatedBy().equals(userRecommendationDto.user)) {
+
+        if(!problem.getCreatedBy().equals(userSession.getUser())) {
             throw new OperationNotPermittedException("User is not the creator of this problem");
         }
 
-        userRecommendationDto.referentId = userId;
-        userRecommendationDto.user = userSession.getUser();
-        userRecommendationDto.voteType = VoteType.UP_VOTE;
+        UserRecommendation userRecommendation = new UserRecommendation();
 
-        recommendationService.recommendUser(userRecommendationDto);
+        userRecommendation.problem = problem;
+        userRecommendation.referentId = userId;
+        userRecommendation.user = userSession.getUser();
+        userRecommendation.voteType = VoteType.UP_VOTE;
+
+        recommendationService.recommendUser(userRecommendation);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
@@ -64,15 +69,18 @@ public class VoteController extends ErrorHandler {
     ) {
         Session userSession = sessionService.get(connectedUserId.toString());
         Problem problem = problemService.get(userRecommendationDto.problemId);
-        if(!problem.getCreatedBy().equals(userRecommendationDto.user)) {
+
+        if(!problem.getCreatedBy().equals(userSession.getUser())) {
             throw new OperationNotPermittedException("User is not the creator of this problem");
         }
+        UserRecommendation userRecommendation = new UserRecommendation();
 
-        userRecommendationDto.referentId = userId;
-        userRecommendationDto.user = userSession.getUser();
-        userRecommendationDto.voteType = VoteType.DOWN_VOTE;
+        userRecommendation.problem = problem;
+        userRecommendation.referentId = userId;
+        userRecommendation.user = userSession.getUser();
+        userRecommendation.voteType = VoteType.DOWN_VOTE;
 
-        recommendationService.recommendUser(userRecommendationDto);
+        recommendationService.recommendUser(userRecommendation);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }

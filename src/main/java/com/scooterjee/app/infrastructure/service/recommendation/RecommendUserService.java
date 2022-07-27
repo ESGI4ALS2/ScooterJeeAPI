@@ -2,10 +2,9 @@ package com.scooterjee.app.infrastructure.service.recommendation;
 
 import com.scooterjee.app.domain.problemestatus.ProblemStatus;
 import com.scooterjee.app.domain.user.User;
+import com.scooterjee.app.domain.vote.UserRecommendation;
 import com.scooterjee.app.domain.vote.Vote;
 import com.scooterjee.app.domain.vote.VoteRepository;
-import com.scooterjee.app.domain.vote_type.VoteType;
-import com.scooterjee.app.expostion.vote.dto.UserRecommendationDto;
 import com.scooterjee.app.infrastructure.service.UserService;
 import com.scooterjee.kernel.SimpleService;
 import com.scooterjee.kernel.Validator;
@@ -18,24 +17,29 @@ import java.time.LocalDate;
 public class RecommendUserService extends SimpleService<VoteRepository, Vote, Long> {
 
     private final UserService userService;
+    private final VoteTypeService voteTypeService;
 
     @Autowired
     public RecommendUserService(
-            VoteRepository repository,
-            Validator<Vote> validator,
-            UserService userService
+        VoteTypeService voteTypeService,
+        VoteRepository repository,
+        Validator<Vote> validator,
+        UserService userService
     ) {
         super(repository, validator, "vote");
         this.userService = userService;
+        this.voteTypeService = voteTypeService;
     }
 
-    public void recommendUser(UserRecommendationDto userRecommendationDto) {
-        User referent = userService.getById(userRecommendationDto.problemId);
-        if(!userRecommendationDto.problem.getReferent().equals(referent)) {
+    public void recommendUser(UserRecommendation userRecommendation) {
+        User referent = userService.getById(userRecommendation.referentId);
+        if(!userRecommendation.problem.getReferent().equals(referent)) {
             throw new IllegalArgumentException("Unknown referent");
         }
 
-        if(!userRecommendationDto.problem.getStatus().getName().equals(ProblemStatus.STATUS_WAITING_FOR_REVIEW)) {
+        voteTypeService.add(userRecommendation.voteType);
+
+        if(!userRecommendation.problem.getStatus().getName().equals(ProblemStatus.STATUS_WAITING_FOR_REVIEW)) {
             throw new IllegalArgumentException(
                 "Recommendation is only available for problems in status " + ProblemStatus.STATUS_WAITING_FOR_REVIEW
             );
@@ -44,9 +48,9 @@ public class RecommendUserService extends SimpleService<VoteRepository, Vote, Lo
         Vote recommendation = new Vote(
             null,
             LocalDate.now(),
-            userRecommendationDto.user,
+            userRecommendation.user,
             referent,
-            userRecommendationDto.voteType
+            userRecommendation.voteType
         );
 
         this.repository.add(recommendation);

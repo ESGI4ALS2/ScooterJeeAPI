@@ -37,6 +37,10 @@ public class VoteTypeDB {
         );
     }
 
+    public Long getId() {
+        return this.voteTypeId;
+    }
+
     public String getName() {
         return name;
     }

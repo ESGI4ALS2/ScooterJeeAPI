@@ -12,7 +12,6 @@ import com.scooterjee.kernel.email.EmailAddress;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,7 +153,7 @@ public class UserDB {
                 .map(voteDB -> new Vote(
                     voteDB.getId(),
                     voteDB.getDateOfVote(),
-                    voteDB.getVoter().toUser(),
+                    null,
                     voteDB.getReferent().toUser(),
                     voteDB.getType().toVoteType()
                 ))

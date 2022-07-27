@@ -104,8 +104,9 @@ public class ProblemController extends ErrorHandler {
         Session userSession = sessionService.get(uuid.toString());
         Problem problem = problemService.get(id);
 
-        boolean userIsProblemReferent = !Objects.equals(problem.getReferent().getID(), userSession.getUser().getID());
-        if (problem.getReferent() == null && !userIsProblemReferent) {
+        boolean userIsProblemReferent = Objects.equals(problem.getReferent().getID(), userSession.getUser().getID());
+
+        if (problem.getReferent() == null || !userIsProblemReferent) {
             throw new SimpleServiceException("Only the referent on the problem can close it");
         }
         ProblemStatus problemStatus = problemStatusService.get(statusId);
