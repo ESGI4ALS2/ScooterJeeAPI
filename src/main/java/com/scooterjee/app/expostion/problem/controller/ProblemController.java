@@ -58,7 +58,7 @@ public class ProblemController extends ErrorHandler {
     }
 
     @GetMapping(value = "/problems/{id}")
-    public ProblemDTO getProblem(@PathVariable @Valid Long id) {
+    public ProblemDTO getProblem(@PathVariable Long id) {
         Problem problem = problemService.get(id);
         return ProblemDTO.of(problem);
     }
@@ -90,7 +90,7 @@ public class ProblemController extends ErrorHandler {
     }
 
     @PutMapping(value = "/problems/{id}")
-    public void putReferentOnProblem(@RequestHeader("uuid") UUID uuid, @PathVariable @Valid Long id) {
+    public void putReferentOnProblem(@RequestHeader("uuid") UUID uuid, @PathVariable Long id) {
         Session userSession = sessionService.get(uuid.toString());
         problemService.putReferentOnProblem(userSession.getUser(),id);
     }
@@ -98,8 +98,8 @@ public class ProblemController extends ErrorHandler {
     @PutMapping(value = "/problems/{id}/status/{statusId}")
     public void putStatusOnProblem(
         @RequestHeader("uuid") UUID uuid,
-        @PathVariable @Valid Long id,
-        @PathVariable @Valid Long statusId
+        @PathVariable Long id,
+        @PathVariable Long statusId
     ) {
         Session userSession = sessionService.get(uuid.toString());
         Problem problem = problemService.get(id);

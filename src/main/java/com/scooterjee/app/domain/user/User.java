@@ -15,6 +15,8 @@ import java.util.List;
 
 public class User extends Entity<Long> {
 
+    private final static int RADIUS = 6366000;
+
     private final String firstName;
     private final String lastName;
     private final String password;
@@ -103,7 +105,6 @@ public class User extends Entity<Long> {
         );
     }
 
-    //TODO déplacer dans ProblemService
     private double meterDistanceToProblem(
         double lat_a,
         double lng_a,
@@ -122,12 +123,9 @@ public class User extends Entity<Long> {
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
-        //earth radius in meters = 6366000
-        //TODO constante
-        return 6366000 * tt;
+        return RADIUS * tt;
     }
 
-    //TODO déplacer dans ProblemService
     public boolean isUserAvailableForProblem(Problem problem){
 
         if( problem.getReferent() != null){
@@ -141,8 +139,6 @@ public class User extends Entity<Long> {
             this.address.getLongitude()
         );
 
-        //10000 = 10km j'imagine
-        //TODO constante
         return !(distanceToProblem >= 10000);
     }
 
@@ -190,7 +186,6 @@ public class User extends Entity<Long> {
             .map(vote -> {
                 int sign = vote.getType().equals(VoteType.UP_VOTE) ? 1 : -1;
                 LocalDate dateOfVote = vote.getVoteDate();
-                // si la date est >= à 1 mois : 1 vote vaut 0,75, >= 3 mois : 1 vote vaut 0,5 et >= 6 mois : 1 vote vaut 0,25.
                 if(dateOfVote.isAfter(LocalDate.now().minusMonths(1))) {
                     return 1f * sign;
                 } else if(dateOfVote.isAfter(LocalDate.now().minusMonths(3))) {

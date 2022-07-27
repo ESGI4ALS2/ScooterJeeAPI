@@ -35,7 +35,7 @@ public class ScooterController extends ErrorHandler {
     }
 
     @GetMapping(value = "/scooters/{id}")
-    public ScooterDTO getScooter(@PathVariable @Valid long id) {
+    public ScooterDTO getScooter(@PathVariable long id) {
         Scooter scooter = scooterService.get(id);
         return new ScooterDTO(scooter.getID(), scooter.getModel().getID(), scooter.getSerialNumber());
     }

@@ -21,7 +21,7 @@ public class ScooterModelController extends ErrorHandler {
     }
 
     @GetMapping(value = "/models/{id}")
-    public ScooterModelDTO getModel(@PathVariable @Valid long id) {
+    public ScooterModelDTO getModel(@PathVariable long id) {
         return new ScooterModelDTO(id,scooterModelService.get(id).getName());
     }
 

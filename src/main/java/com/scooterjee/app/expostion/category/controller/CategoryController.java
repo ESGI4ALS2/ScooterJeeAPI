@@ -32,11 +32,11 @@ public class CategoryController extends ErrorHandler {
     }
 
     @GetMapping(value = "/categories/{id}/users")
-    public List<UserDTO> getAllCategoriesUser(@PathVariable @Valid Long id) {
+    public List<UserDTO> getAllCategoriesUser(@PathVariable Long id) {
         return categoriesService
             .getAllCategoriesUsers(id)
             .stream()
-            .map(user -> UserDTO.of(user))
+            .map(UserDTO::of)
             .collect(Collectors.toList()
         );
     }

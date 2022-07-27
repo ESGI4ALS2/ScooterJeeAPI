@@ -3,6 +3,7 @@ package com.scooterjee.app.infrastructure.database.vote;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class UserVoteKey implements Serializable {
@@ -21,5 +22,16 @@ public class UserVoteKey implements Serializable {
 
     }
 
-    //Implémenter hashcode et equals
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserVoteKey that = (UserVoteKey) o;
+        return Objects.equals(voterId, that.voterId) && Objects.equals(referentId, that.referentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(voterId, referentId);
+    }
 }

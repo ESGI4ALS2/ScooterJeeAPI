@@ -18,7 +18,7 @@ import java.time.LocalDate;
 class ScooterValidatorTest {
 
     static ScooterValidator scooterValidator;
-    static User defaultValidUser;
+    public static User defaultValidUser;
 
     @BeforeAll
     static void beforeAll() {

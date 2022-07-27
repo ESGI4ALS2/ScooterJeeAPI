@@ -38,7 +38,7 @@ public class VoteController extends ErrorHandler {
     @PostMapping(value = "/user/{userId}/recommend")
     public ResponseEntity<String> recommendUser(
         @RequestHeader("uuid") UUID connectedUserId,
-        @PathVariable @Valid long userId,
+        @PathVariable long userId,
         @RequestBody @Valid UserRecommendationDto userRecommendationDto
     ) {
         Session userSession = sessionService.get(connectedUserId.toString());
@@ -59,7 +59,7 @@ public class VoteController extends ErrorHandler {
     @PostMapping(value = "/user/{userId}/dont-recommend")
     public ResponseEntity<String> doNotRecommendUser(
         @RequestHeader("uuid") UUID connectedUserId,
-        @PathVariable @Valid long userId,
+        @PathVariable long userId,
         @RequestBody @Valid UserRecommendationDto userRecommendationDto
     ) {
         Session userSession = sessionService.get(connectedUserId.toString());
