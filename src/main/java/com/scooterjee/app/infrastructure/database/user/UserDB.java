@@ -34,10 +34,10 @@ public class UserDB {
     @OneToOne
     private AddressDB address;
 
-    @OneToMany(mappedBy = "referent")
+    @OneToMany(mappedBy = "voter")
     private List<VoteDB> votesReceived;
 
-    @OneToMany(mappedBy = "voter")
+    @OneToMany(mappedBy = "referent")
     private List<VoteDB> votesGiven;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -143,8 +143,8 @@ public class UserDB {
                 .map(voteDB -> new Vote(
                     voteDB.getId(),
                     voteDB.getDateOfVote(),
-                    voteDB.getVoter().toUser(),
-                    voteDB.getReferent().toUser(),
+                    voteDB.getVoter().toVoter(),
+                    voteDB.getReferent().toVoter(),
                     voteDB.getType().toVoteType()
                 ))
                 .collect(Collectors.toList()),
@@ -153,11 +153,33 @@ public class UserDB {
                 .map(voteDB -> new Vote(
                     voteDB.getId(),
                     voteDB.getDateOfVote(),
-                    voteDB.getVoter().toUser(),
-                    voteDB.getReferent().toUser(),
+                    voteDB.getVoter().toVoter(),
+                    voteDB.getReferent().toVoter(),
                     voteDB.getType().toVoteType()
                 ))
                 .collect(Collectors.toList())
+        );
+    }
+
+    public User toVoter() {
+        return new User(
+            this.getId(),
+            this.getFirstName(),
+            this.getLastName(),
+            this.getPassword(),
+            this.getPhoneNumber(),
+            new EmailAddress(this.getMail()),
+            this.getAddress().toAddress(),
+            categories
+                .stream()
+                .map(categoriesDB -> new Categories(categoriesDB.getCategoriesID(), categoriesDB.getName()))
+                .collect(Collectors.toList()),
+            roles
+                .stream()
+                .map(roleDB -> new Role(roleDB.getRoleID(), roleDB.getName()))
+                .collect(Collectors.toList()),
+            List.of(),
+            List.of()
         );
     }
 

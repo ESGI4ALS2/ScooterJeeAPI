@@ -234,7 +234,7 @@ class UserControllerE2ETest {
         //now we are able to see the recommendation
         mvc.perform(MockMvcRequestBuilders.get("/referents"))
             .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().json("[]"));
+            .andExpect(MockMvcResultMatchers.content().json("[{\"id\":1,\"lastName\":\"Abib\",\"firstname\":\"Paul Adil\",\"rating\":0.0},{\"id\":2,\"lastName\":\"Douillard Petite\",\"firstname\":\"Amélie Vieille\",\"rating\":1.0}]"));
     }
 
 }

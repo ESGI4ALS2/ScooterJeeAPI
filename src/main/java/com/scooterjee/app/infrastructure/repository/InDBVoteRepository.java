@@ -1,9 +1,7 @@
 package com.scooterjee.app.infrastructure.repository;
 
-import com.scooterjee.app.domain.session.Session;
 import com.scooterjee.app.domain.vote.Vote;
 import com.scooterjee.app.domain.vote.VoteRepository;
-import com.scooterjee.app.infrastructure.database.user.UserDB;
 import com.scooterjee.app.infrastructure.database.vote.VoteDB;
 import com.scooterjee.app.infrastructure.database.vote.VoteDBRepository;
 import org.springframework.stereotype.Repository;
